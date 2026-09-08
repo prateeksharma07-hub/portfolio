@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Digital World | Interactive Portfolio</title>
+    
+    <meta name="description" content="An interactive, cinematic digital portfolio showcasing my skills, projects, and journey as a creative developer.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="loading">
+    
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Theme Switcher (Energy Core) -->
+    <div class="theme-switcher panel-glass">
+        <div class="theme-label">ENERGY CORE</div>
+        <div class="theme-options">
+            <button class="theme-btn active hover-target" data-color="#00E5FF" style="background: #00E5FF;" aria-label="Cyan"></button>
+            <button class="theme-btn hover-target" data-color="#8A2BE2" style="background: #8A2BE2;" aria-label="Violet"></button>
+            <button class="theme-btn hover-target" data-color="#00FF66" style="background: #00FF66;" aria-label="Neon Green"></button>
+            <button class="theme-btn hover-target" data-color="#FF3366" style="background: #FF3366;" aria-label="Crimson"></button>
+        </div>
+    </div>
+
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="preloader-content">
+            <div class="preloader-text">INITIALIZING DIGITAL WORLD<span class="dots">...</span></div>
+            <div class="progress-bar"><div class="progress"></div></div>
+            <div class="loading-stats">
+                <span id="load-module">Loading Core Modules</span>
+                <span id="load-pct">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="app">
+        
+        <!-- Hero Section -->
+        <section id="hero" class="section hero">
+            <canvas id="hero-canvas"></canvas>
+            <div class="hero-content">
+                <div class="hero-glitch-wrapper">
+                    <h2 class="hero-subtitle" data-split>SYSTEM ONLINE</h2>
+                </div>
+                <h1 class="hero-title" data-split>MY DIGITAL WORLD</h1>
+                <p class="hero-description fade-up">Creative Developer // UI Engineer // Digital Architect</p>
+                <div class="scroll-indicator fade-up">
+                    <span class="mouse"></span>
+                    <span class="scroll-text">Initiate Scroll</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- About & Terminal Section -->
+        <section id="about" class="section about">
+            <div class="container">
+                <h2 class="section-title">01 // WHO I AM</h2>
+                <div class="about-grid">
+                    <div class="about-text">
+                        <p class="reveal-text">I engineer premium digital experiences at the intersection of robust logic and high-end design. My work revolves around creating systems that are not just functional, but profoundly interactive.</p>
+                        
+                        <div class="about-stats fade-up">
+                            <div class="stat-box magnetic">
+                                <span class="stat-number" data-target="250">0</span><span class="stat-plus">+</span>
+                                <span class="stat-label">Commits this year</span>
+                            </div>
+                            <div class="stat-box magnetic">
+                                <span class="stat-number">∞</span>
+                                <span class="stat-label">Curiosity Engine</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Interactive Terminal -->
+                    <div class="terminal-wrapper panel-glass fade-up">
+                        <div class="terminal-header">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                            <div class="terminal-title">guest@digital-world:~</div>
+                        </div>
+                        <div class="terminal-body" id="terminal-output">
+                            <div class="term-line system">Welcome to the interactive console. Type 'help' to see available commands.</div>
+                        </div>
+                        <div class="terminal-input-line">
+                            <span class="prompt">guest@digital-world:~$</span>
+                            <input type="text" id="terminal-input" class="term-input" autocomplete="off" spellcheck="false" autofocus>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="section projects">
+            <div class="container">
+                <h2 class="section-title">02 // WHAT I BUILD</h2>
+                <div class="projects-wrapper">
+                    <!-- Project 1 -->
+                    <div class="project-item">
+                        <div class="project-info">
+                            <div class="project-meta">01 / Concept</div>
+                            <h3 class="project-title">Aether OS</h3>
+                            <p class="project-desc">A web-based operating system concept focusing on fluid animations, spatial UI, and complex window management using pure Vanilla JavaScript.</p>
+                            <ul class="project-tech">
+                                <li>HTML5 Canvas</li>
+                                <li>Vanilla JS</li>
+                                <li>Custom Physics</li>
+                            </ul>
+                            <button class="btn-link hover-target open-project" data-project="aether">View Architecture</button>
+                        </div>
+                        <div class="project-visual magnetic open-project" data-project="aether">
+                            <div class="visual-placeholder">System Interface Render</div>
+                            <div class="visual-overlay">Click to Expand</div>
+                        </div>
+                    </div>
+                    <!-- Project 2 -->
+                    <div class="project-item reverse">
+                        <div class="project-info">
+                            <div class="project-meta">02 / Application</div>
+                            <h3 class="project-title">Lumina Data Analytics</h3>
+                            <p class="project-desc">A high-performance data visualization dashboard processing live websocket streams, featuring custom kinetic typography and semantic dark mode.</p>
+                            <ul class="project-tech">
+                                <li>D3.js Core</li>
+                                <li>WebSockets</li>
+                                <li>CSS Grid Architecture</li>
+                            </ul>
+                            <button class="btn-link hover-target open-project" data-project="lumina">View Architecture</button>
+                        </div>
+                        <div class="project-visual magnetic open-project" data-project="lumina">
+                            <div class="visual-placeholder">Data Visualization Graph</div>
+                            <div class="visual-overlay">Click to Expand</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Canvas Section -->
+        <section id="skills" class="section skills">
+            <div class="container">
+                <h2 class="section-title">03 // WHAT I KNOW</h2>
+                <p class="section-subtitle fade-up">Interact with the orbital skill matrix.</p>
+            </div>
+            <!-- Complex Canvas for Skills Orbit -->
+            <div class="skills-canvas-wrapper fade-up">
+                <canvas id="skills-canvas"></canvas>
+                <div id="skills-ui-layer"></div>
+            </div>
+        </section>
+
+        <!-- Horizontal Scroll Journey Section -->
+        <section id="journey-pin" class="section journey-pin">
+            <div class="container">
+                <h2 class="section-title">04 // TIMELINE & TRAJECTORY</h2>
+            </div>
+            <div class="journey-horizontal-container">
+                <div class="journey-track" id="journey-track">
+                    
+                    <div class="journey-card panel-glass">
+                        <div class="j-year">2023</div>
+                        <h4 class="j-title">The Foundation</h4>
+                        <p class="j-desc">Mastered core web technologies (HTML, CSS, JS). Began understanding the DOM and how to manipulate it efficiently without frameworks.</p>
+                    </div>
+
+                    <div class="journey-card panel-glass">
+                        <div class="j-year">2024</div>
+                        <h4 class="j-title">System Architecture</h4>
+                        <p class="j-desc">Dove deep into complex data structures, algorithmic efficiency, and building scalable frontend architectures. Learned state management paradigms.</p>
+                    </div>
+
+                    <div class="journey-card panel-glass">
+                        <div class="j-year">2025</div>
+                        <h4 class="j-title">Creative Engineering</h4>
+                        <p class="j-desc">Bridged the gap between code and design. Focused on WebGL, Canvas API, advanced CSS animations, and complex GSAP timelines to create cinematic experiences.</p>
+                    </div>
+
+                    <div class="journey-card panel-glass highlight">
+                        <div class="j-year">PRESENT</div>
+                        <h4 class="j-title">Current Objective</h4>
+                        <ul class="j-list">
+                            <li><span class="glow-dot"></span> Three.js & Custom Shaders</li>
+                            <li><span class="glow-dot"></span> WebAssembly (Rust) integration</li>
+                            <li><span class="glow-dot"></span> Advanced Motion Choreography</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Complex Contact Form Section -->
+        <section id="contact" class="section contact">
+            <div class="container">
+                <h2 class="section-title">05 // INITIATE CONTACT</h2>
+                <div class="contact-wrapper">
+                    <div class="contact-info fade-up">
+                        <h3 class="contact-heading">Ready to compile<br>something great?</h3>
+                        <p class="contact-sub">System is standing by. Send a transmission to discuss projects, architectural designs, or new opportunities.</p>
+                        
+                        <div class="contact-direct">
+                            <p class="sys-text">Direct Link:</p>
+                            <a href="mailto:hello@example.com" class="hover-target">system.admin@digitalworld.net</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-form-container panel-glass fade-up">
+                        <form id="transmission-form" class="complex-form">
+                            <div class="form-group">
+                                <input type="text" id="name" name="name" class="form-input" required>
+                                <label for="name" class="form-label">Identifier (Name)</label>
+                                <div class="form-line"></div>
+                                <span class="error-msg">Invalid identifier.</span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <input type="email" id="email" name="email" class="form-input" required>
+                                <label for="email" class="form-label">Return Address (Email)</label>
+                                <div class="form-line"></div>
+                                <span class="error-msg">Valid return address required.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <textarea id="message" name="message" class="form-input form-textarea" required></textarea>
+                                <label for="message" class="form-label">Payload (Message)</label>
+                                <div class="form-line"></div>
+                                <span class="error-msg">Payload cannot be empty.</span>
+                            </div>
+
+                            <button type="submit" class="btn-primary submit-btn hover-target">
+                                <span class="btn-text">Transmit Payload</span>
+                                <div class="btn-loader"></div>
+                            </button>
+                            
+                            <div class="form-status">
+                                <span class="status-text"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="container footer-content">
+                <div class="sys-status">
+                    <span class="pulse-dot"></span> System Status: Nominal
+                </div>
+                <div class="social-links">
+                    <a href="#" class="hover-target">[ GitHub ]</a>
+                    <a href="#" class="hover-target">[ LinkedIn ]</a>
+                    <a href="#" class="hover-target">[ X / Twitter ]</a>
+                </div>
+                <p class="copyright">&copy; 2026 | Engineered for the Digital World</p>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Custom Project Modal/Drawer -->
+    <div id="project-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-controls">
+                    <button class="modal-close hover-target" aria-label="Close Modal">
+                        <span class="close-line"></span>
+                        <span class="close-line"></span>
+                    </button>
+                </div>
+                <h2 class="modal-title" id="modal-title">Project Name</h2>
+            </div>
+            <div class="modal-body">
+                <div class="modal-gallery">
+                    <div class="gallery-track">
+                        <div class="gallery-item">Wireframe View</div>
+                        <div class="gallery-item">Logic Flow</div>
+                        <div class="gallery-item">Final Render</div>
+                    </div>
+                </div>
+                <div class="modal-details">
+                    <div class="detail-section">
+                        <h3>The Challenge</h3>
+                        <p id="modal-challenge">Description of the engineering challenge.</p>
+                    </div>
+                    <div class="detail-section">
+                        <h3>System Architecture</h3>
+                        <ul id="modal-tech-list" class="tech-grid">
+                            <!-- Populated by JS -->
+                        </ul>
+                    </div>
+                    <div class="modal-actions">
+                        <a href="#" class="btn-primary hover-target">View Source</a>
+                        <a href="#" class="btn-link hover-target">Live Deployment</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CDN Libraries -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Custom Logic -->
+    <script src="./script.js"></script>
+</body>
+</html>
