@@ -1,28 +1,52 @@
 // ==========================================================================
 // 1. INITIALIZATION & UTILS
 // ==========================================================================
-gsap.registerPlugin(ScrollTrigger);
+if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+}
 
-// Initialize Lenis for Smooth Scrolling
-const lenis = new Lenis({
-    duration: 1.2,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    orientation: 'vertical',
-    gestureOrientation: 'vertical',
-    smoothWheel: true,
-    smoothTouch: false,
-    touchMultiplier: 2,
-});
+// Initialize Lenis for Smooth Scrolling safely
+let lenis = null;
+if (typeof Lenis !== 'undefined') {
+    lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        smoothTouch: false,
+        touchMultiplier: 2,
+    });
 
-// Sync Lenis scroll with GSAP ScrollTrigger
-lenis.on('scroll', ScrollTrigger.update);
+    // Sync Lenis scroll with GSAP ScrollTrigger
+    if (typeof ScrollTrigger !== 'undefined') {
+        lenis.on('scroll', ScrollTrigger.update);
+    }
 
-// Drive Lenis with requestAnimationFrame (most reliable method)
-function raf(time) {
-    lenis.raf(time);
+    // Drive Lenis with requestAnimationFrame (most reliable method)
+    function raf(time) {
+        if (lenis) lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
     requestAnimationFrame(raf);
 }
-requestAnimationFrame(raf);
+
+// Smooth anchor scrolling handler for internal links (Header, Hero CTA, etc.)
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (!href || href === '#') return;
+        const target = document.querySelector(href);
+        if (target) {
+            e.preventDefault();
+            if (lenis) {
+                lenis.scrollTo(target, { offset: -25, duration: 1.2 });
+            } else {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
+});
 
 // Element Selectors
 const root = document.documentElement;
@@ -52,15 +76,15 @@ window.addEventListener('mousemove', (e) => {
     }
     
     // Use transform3d for GPU-accelerated positioning (Issue #4)
-    cursorDot.style.transform = `translate3d(${mouseX - 3}px, ${mouseY - 3}px, 0)`;
+    if (cursorDot) cursorDot.style.transform = `translate3d(${mouseX - 3}px, ${mouseY - 3}px, 0)`;
 });
 
 // Handle cursor leaving the window (Issue #3)
 document.addEventListener('mouseleave', () => {
     cursorVisible = false;
     if (cursorReady) {
-        cursorDot.style.opacity = '0';
-        cursorOutline.style.opacity = '0';
+        if (cursorDot) cursorDot.style.opacity = '0';
+        if (cursorOutline) cursorOutline.style.opacity = '0';
     }
     // Clear any stuck hover states
     document.body.classList.remove('cursor-hover');
@@ -69,8 +93,8 @@ document.addEventListener('mouseleave', () => {
 document.addEventListener('mouseenter', () => {
     cursorVisible = true;
     if (cursorReady) {
-        cursorDot.style.opacity = '1';
-        cursorOutline.style.opacity = '1';
+        if (cursorDot) cursorDot.style.opacity = '1';
+        if (cursorOutline) cursorOutline.style.opacity = '1';
     }
 });
 
@@ -83,7 +107,7 @@ function animateCursor() {
         outlineY += distY * 0.15;
         
         // Use transform3d for GPU-accelerated positioning (Issue #4)
-        cursorOutline.style.transform = `translate3d(${outlineX - 20}px, ${outlineY - 20}px, 0)`;
+        if (cursorOutline) cursorOutline.style.transform = `translate3d(${outlineX - 20}px, ${outlineY - 20}px, 0)`;
     }
     
     requestAnimationFrame(animateCursor);
@@ -191,9 +215,14 @@ function initHeaderHUD() {
 initHeaderHUD();
 
 // ==========================================================================
-// 4. PRELOADER & BOOT SEQUENCE
+// 4. PRELOADER & BOOT SEQUENCE (Bulletproof readyState handler)
 // ==========================================================================
-window.addEventListener('load', () => {
+let preloaderFinished = false;
+
+function runPreloaderBoot() {
+    if (preloaderFinished) return;
+    preloaderFinished = true;
+
     const progress = document.querySelector('.progress');
     const loadPct = document.getElementById('load-pct');
     const loadModule = document.getElementById('load-module');
@@ -202,25 +231,27 @@ window.addEventListener('load', () => {
     let width = 0;
     
     const interval = setInterval(() => {
-        width += Math.random() * 12;
+        width += Math.random() * 14 + 6;
         
-        if(width % 20 < 10) {
+        if (loadModule && width % 20 < 10) {
             loadModule.textContent = `Loading ${modules[Math.floor(Math.random() * modules.length)]}...`;
         }
 
         if (width >= 100) {
             width = 100;
             clearInterval(interval);
-            loadPct.textContent = '100%';
-            progress.style.width = '100%';
-            loadModule.textContent = 'System Ready.';
+            if (loadPct) loadPct.textContent = '100%';
+            if (progress) progress.style.width = '100%';
+            if (loadModule) loadModule.textContent = 'System Ready.';
             
             setTimeout(() => {
                 document.body.classList.add('loaded');
                 document.body.classList.remove('loading');
                 
-                // Start Lenis after preloader (Issue #17)
-                lenis.start();
+                // Start Lenis safely after preloader
+                if (typeof lenis !== 'undefined' && lenis) {
+                    lenis.start();
+                }
                 
                 initGSAPAnimations();
                 initHeroParallax();
@@ -230,13 +261,19 @@ window.addEventListener('load', () => {
                 if (typeof initTerminalWelcome === 'function' && termInput) {
                     initTerminalWelcome();
                 }
-            }, 800);
+            }, 600);
         } else {
-            progress.style.width = width + '%';
-            loadPct.textContent = Math.floor(width) + '%';
+            if (progress) progress.style.width = width + '%';
+            if (loadPct) loadPct.textContent = Math.floor(width) + '%';
         }
-    }, 100);
-});
+    }, 70);
+}
+
+if (document.readyState === 'complete') {
+    runPreloaderBoot();
+} else {
+    window.addEventListener('load', runPreloaderBoot);
+}
 
 // ==========================================================================
 // 5. INTERACTIVE TERMINAL / CLI (Legacy Safe Handler)
@@ -245,12 +282,15 @@ const termInput = document.getElementById('terminal-input');
 const termOutput = document.getElementById('terminal-output');
 
 const commands = {
-    'help': 'Available commands: whoami, projects, skills, contact, clear, date',
-    'whoami': 'Creative Developer specializing in high-performance web systems and complex UI architectures.',
-    'projects': '1. Aether OS (Web OS Concept)<br>2. Lumina Data Analytics (Data Dashboard)<br>Type "open [project]" to view. (e.g., open aether)',
-    'skills': 'Languages: JavaScript, HTML5, CSS3, Rust<br>Tech: WebGL, Three.js, Canvas API, GSAP, Node.js',
-    'contact': 'Direct line: system.admin@digitalworld.net',
-    'date': new Date().toString(),
+    'help': 'Available commands: whoami, projects, skills, cpp, dsa, aiml, systemdesign, contact, date, clear',
+    'whoami': 'Prateek Sharma | Software Engineer & AI Systems Specialist. Designing low-level systems (C++, DSA) with cinematic 3D web applications and neural network pipelines.',
+    'projects': '1. Aether OS (Spatial Window Web OS)<br>2. Lumina Data Analytics (Real-time WebSocket Dashboard 50K+ points)<br>Type "open aether" or "open lumina" to inspect architecture.',
+    'skills': '<b>Languages:</b> Modern C++ (17/20), Python, JavaScript, TypeScript, C, SQL<br><b>Core CS:</b> DSA (Graphs, DP, Trees), Concurrency, Memory Optimization<br><b>AI / ML:</b> PyTorch, Deep Learning, CNNs, Transformers, RAG, NLP<br><b>Systems & 3D:</b> System Design, WebSockets, Redis, Three.js, WebGL, Canvas API',
+    'cpp': '⚡ <b>Modern C++ (17/20):</b> RAII, smart pointers (unique_ptr, shared_ptr), move semantics, custom STL allocators, template metaprogramming, and thread synchronization (mutex, atomics, condition variables).',
+    'dsa': '📊 <b>Data Structures & Algorithms:</b> Graph Theory (Dijkstra, BFS/DFS, MST), Dynamic Programming (1D/2D, bitmask), Advanced Trees (Segment Trees, Fenwick, Tries, BST), Disjoint Set Union (DSU), and asymptotic Big-O runtime optimization.',
+    'aiml': '🧠 <b>AI & Deep Learning:</b> PyTorch neural networks, CNNs for computer vision, Transformers & Vector Embeddings for NLP, RAG architectures, and autonomous agent orchestration.',
+    'systemdesign': '🌐 <b>Distributed Systems:</b> High-concurrency WebSockets streaming, Redis distributed caching, asynchronous non-blocking event loops, and scalable REST APIs.',
+    'contact': 'Direct Email: prateek.sharmaop07@gmail.com | Phone: +91 7725949690 | GitHub: https://github.com/prateeksharma07-hub',
     'clear': 'CLEAR_SIGNAL'
 };
 
@@ -273,6 +313,11 @@ function processCommand(cmd) {
         return;
     }
     
+    if (cmd === 'date') {
+        printToTerminal(`System Clock: ${new Date().toUTCString()}`, 'system');
+        return;
+    }
+
     if (cmd.startsWith('open ')) {
         const project = cmd.split(' ')[1];
         if (project === 'aether' || project === 'lumina') {
@@ -495,6 +540,10 @@ function initSkillsCanvas() {
 }
 
 function renderSkillsCanvas() {
+    if (!sCanvas || !sCtx || !sWidth || !sHeight) {
+        requestAnimationFrame(renderSkillsCanvas);
+        return;
+    }
     sCtx.clearRect(0, 0, sWidth, sHeight);
     
     const centerX = sWidth / 2;
@@ -586,6 +635,11 @@ function initSkillsFilter() {
                 }
             });
 
+            // Refresh ScrollTrigger to sync accurate layout scroll positions
+            if (typeof ScrollTrigger !== 'undefined') {
+                setTimeout(() => ScrollTrigger.refresh(), 350);
+            }
+
             if (typeof playCyberBeep === 'function') {
                 playCyberBeep(700, 'sine', 0.05);
             }
@@ -604,51 +658,61 @@ const formStatus = document.querySelector('.form-status .status-text');
 const btnLoader = document.querySelector('.btn-loader');
 const submitBtn = document.querySelector('.submit-btn');
 
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    let isValid = true;
-    const inputs = contactForm.querySelectorAll('.form-input');
-    
-    inputs.forEach(input => {
-        const group = input.parentElement;
-        if (!input.checkValidity() || input.value.trim() === '') {
-            group.classList.add('error');
-            isValid = false;
-        } else {
-            group.classList.remove('error');
+if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        let isValid = true;
+        const inputs = contactForm.querySelectorAll('.form-input');
+        
+        inputs.forEach(input => {
+            const group = input.parentElement;
+            if (!input.checkValidity() || input.value.trim() === '') {
+                group.classList.add('error');
+                isValid = false;
+            } else {
+                group.classList.remove('error');
+            }
+        });
+
+        if (isValid) {
+            // Complex submit animation
+            if (submitBtn) submitBtn.style.pointerEvents = 'none';
+            if (formStatus) {
+                formStatus.className = 'status-text'; // Reset classes
+                formStatus.textContent = 'Encrypting payload...';
+            }
+            
+            if (btnLoader && typeof gsap !== 'undefined') {
+                gsap.to(btnLoader, { width: '50%', duration: 1, ease: "power2.inOut" });
+            }
+            
+            setTimeout(() => {
+                if (formStatus) formStatus.textContent = 'Transmitting to secure server...';
+                if (btnLoader && typeof gsap !== 'undefined') {
+                    gsap.to(btnLoader, { width: '100%', duration: 1.5, ease: "power2.inOut" });
+                }
+            }, 1000);
+
+            setTimeout(() => {
+                if (formStatus) {
+                    formStatus.textContent = 'Transmission Successful. System Admin notified.';
+                    formStatus.className = 'status-text success';
+                }
+                if (btnLoader) btnLoader.style.width = '0%';
+                contactForm.reset();
+                if (submitBtn) submitBtn.style.pointerEvents = 'all';
+            }, 3000);
         }
     });
 
-    if (isValid) {
-        // Complex submit animation
-        submitBtn.style.pointerEvents = 'none';
-        formStatus.className = 'status-text'; // Reset classes
-        formStatus.textContent = 'Encrypting payload...';
-        
-        gsap.to(btnLoader, { width: '50%', duration: 1, ease: "power2.inOut" });
-        
-        setTimeout(() => {
-            formStatus.textContent = 'Transmitting to secure server...';
-            gsap.to(btnLoader, { width: '100%', duration: 1.5, ease: "power2.inOut" });
-        }, 1000);
-
-        setTimeout(() => {
-            formStatus.textContent = 'Transmission Successful. System Admin notified.';
-            formStatus.className = 'status-text success'; // Issue #8: class on span matches CSS selector
-            btnLoader.style.width = '0%';
-            contactForm.reset();
-            submitBtn.style.pointerEvents = 'all';
-        }, 3000);
-    }
-});
-
-// Clear error on input
-contactForm.querySelectorAll('.form-input').forEach(input => {
-    input.addEventListener('input', () => {
-        input.parentElement.classList.remove('error');
+    // Clear error on input
+    contactForm.querySelectorAll('.form-input').forEach(input => {
+        input.addEventListener('input', () => {
+            if (input.parentElement) input.parentElement.classList.remove('error');
+        });
     });
-});
+}
 
 
 // ==========================================================================
@@ -773,89 +837,121 @@ function openProjectModal(id) {
     });
 
     // Populate links
-    document.getElementById('modal-source-link').href = data.sourceUrl;
-    document.getElementById('modal-live-link').href = data.liveUrl;
+    const srcLink = document.getElementById('modal-source-link');
+    const lvLink = document.getElementById('modal-live-link');
+    if (srcLink) {
+        srcLink.href = data.sourceUrl || '#';
+        srcLink.target = '_blank';
+        srcLink.rel = 'noopener noreferrer';
+    }
+    if (lvLink) {
+        lvLink.href = data.liveUrl || '#';
+        lvLink.target = '_blank';
+        lvLink.rel = 'noopener noreferrer';
+    }
 
     // Build image gallery slideshow
-    currentImages = data.images;
+    currentImages = data.images || [];
     currentSlide = 0;
-    gallerySlideshow.innerHTML = '';
-    galleryDots.innerHTML = '';
+    if (gallerySlideshow) gallerySlideshow.innerHTML = '';
+    if (galleryDots) galleryDots.innerHTML = '';
 
     currentImages.forEach((img, index) => {
         // Create slide
         const slide = document.createElement('div');
         slide.className = `gallery-slide ${index === 0 ? 'active' : ''}`;
         slide.innerHTML = `<img src="${img.src}" alt="${img.caption}" loading="lazy">`;
-        gallerySlideshow.appendChild(slide);
+        if (gallerySlideshow) gallerySlideshow.appendChild(slide);
 
         // Create dot
         const dot = document.createElement('button');
         dot.className = `gallery-dot ${index === 0 ? 'active' : ''}`;
         dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
         dot.addEventListener('click', () => goToSlide(index));
-        galleryDots.appendChild(dot);
+        if (galleryDots) galleryDots.appendChild(dot);
     });
 
-    galleryCaption.textContent = currentImages[0].caption;
+    if (galleryCaption && currentImages.length > 0) {
+        galleryCaption.textContent = currentImages[0].caption;
+    }
 
     // Scroll details panel to top
-    document.getElementById('modal-details').scrollTop = 0;
+    const modalDetails = document.getElementById('modal-details');
+    if (modalDetails) modalDetails.scrollTop = 0;
 
     // Open Modal
-    modal.classList.add('active');
-    modal.setAttribute('aria-hidden', 'false');
-    lenis.stop();
+    if (modal) {
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+    if (typeof lenis !== 'undefined' && lenis) {
+        lenis.stop();
+    }
     
     // Animate inner elements
-    gsap.fromTo(".modal-container", {y: 50, opacity: 0}, {y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: 0.1});
-    gsap.fromTo(".gallery-slide.active", {scale: 1.1, opacity: 0}, {scale: 1, opacity: 1, duration: 0.8, ease: "power2.out", delay: 0.3});
-    gsap.fromTo(".modal-stat-item", {y: 20, opacity: 0}, {y: 0, opacity: 1, stagger: 0.08, duration: 0.5, delay: 0.3});
-    gsap.fromTo(".detail-section", {y: 20, opacity: 0}, {y: 0, opacity: 1, stagger: 0.1, duration: 0.5, delay: 0.4});
-    gsap.fromTo(".modal-actions", {y: 10, opacity: 0}, {y: 0, opacity: 1, duration: 0.5, delay: 0.6});
+    if (typeof gsap !== 'undefined') {
+        gsap.fromTo(".modal-container", {y: 50, opacity: 0}, {y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: 0.1});
+        gsap.fromTo(".gallery-slide.active", {scale: 1.1, opacity: 0}, {scale: 1, opacity: 1, duration: 0.8, ease: "power2.out", delay: 0.3});
+        gsap.fromTo(".modal-stat-item", {y: 20, opacity: 0}, {y: 0, opacity: 1, stagger: 0.08, duration: 0.5, delay: 0.3});
+        gsap.fromTo(".detail-section", {y: 20, opacity: 0}, {y: 0, opacity: 1, stagger: 0.1, duration: 0.5, delay: 0.4});
+        gsap.fromTo(".modal-actions", {y: 10, opacity: 0}, {y: 0, opacity: 1, duration: 0.5, delay: 0.6});
+    }
 
     // Re-bind cursor hover for new modal elements
     bindCursorHover();
 }
 
 function goToSlide(index) {
-    if (index < 0 || index >= currentImages.length || index === currentSlide) return;
+    if (!currentImages || index < 0 || index >= currentImages.length || index === currentSlide) return;
+    if (!gallerySlideshow || !galleryDots) return;
     
     const slides = gallerySlideshow.querySelectorAll('.gallery-slide');
     const dots = galleryDots.querySelectorAll('.gallery-dot');
     
-    slides[currentSlide].classList.remove('active');
-    dots[currentSlide].classList.remove('active');
+    if (slides[currentSlide]) slides[currentSlide].classList.remove('active');
+    if (dots[currentSlide]) dots[currentSlide].classList.remove('active');
     
     currentSlide = index;
     
-    slides[currentSlide].classList.add('active');
-    dots[currentSlide].classList.add('active');
-    galleryCaption.textContent = currentImages[currentSlide].caption;
+    if (slides[currentSlide]) slides[currentSlide].classList.add('active');
+    if (dots[currentSlide]) dots[currentSlide].classList.add('active');
+    if (galleryCaption && currentImages[currentSlide]) {
+        galleryCaption.textContent = currentImages[currentSlide].caption;
+    }
 }
 
-galleryPrev.addEventListener('click', () => {
-    goToSlide(currentSlide > 0 ? currentSlide - 1 : currentImages.length - 1);
-});
+if (galleryPrev) {
+    galleryPrev.addEventListener('click', () => {
+        goToSlide(currentSlide > 0 ? currentSlide - 1 : currentImages.length - 1);
+    });
+}
 
-galleryNext.addEventListener('click', () => {
-    goToSlide(currentSlide < currentImages.length - 1 ? currentSlide + 1 : 0);
-});
+if (galleryNext) {
+    galleryNext.addEventListener('click', () => {
+        goToSlide(currentSlide < currentImages.length - 1 ? currentSlide + 1 : 0);
+    });
+}
 
 function closeProjectModal() {
-    modal.classList.remove('active');
-    modal.setAttribute('aria-hidden', 'true');
-    lenis.start();
+    if (modal) {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+    if (typeof lenis !== 'undefined' && lenis) {
+        lenis.start();
+    }
 }
 
-modalCloseBtn.addEventListener('click', closeProjectModal);
-modal.addEventListener('click', (e) => {
-    if(e.target === modal) closeProjectModal();
-});
+if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeProjectModal);
+if (modal) {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeProjectModal();
+    });
+}
 
 // Keyboard navigation for modal
 document.addEventListener('keydown', (e) => {
-    if (!modal.classList.contains('active')) return;
+    if (!modal || !modal.classList.contains('active')) return;
     
     if (e.key === 'Escape') closeProjectModal();
     if (e.key === 'ArrowLeft') goToSlide(currentSlide > 0 ? currentSlide - 1 : currentImages.length - 1);
@@ -923,7 +1019,8 @@ function initGSAPAnimations() {
     if (journeyPin && journeyTrack) {
         function getScrollAmount() {
             let trackWidth = journeyTrack.scrollWidth;
-            return -(trackWidth - window.innerWidth + (window.innerWidth * 0.12));
+            let amount = -(trackWidth - window.innerWidth + (window.innerWidth * 0.12));
+            return Math.min(0, amount);
         }
 
         const tween = gsap.to(journeyTrack, {
@@ -935,7 +1032,7 @@ function initGSAPAnimations() {
         ScrollTrigger.create({
             trigger: journeyPin,
             start: "top top",
-            end: () => `+=${getScrollAmount() * -1}`,
+            end: () => `+=${Math.max(0, getScrollAmount() * -1)}`,
             pin: true,
             animation: tween,
             scrub: 1,
@@ -963,6 +1060,8 @@ function initGSAPAnimations() {
 // 11. HERO 3D MOUSE PARALLAX & TILT
 // ==========================================================================
 function initHeroParallax() {
+    if (window._heroParallaxInitialized) return;
+    window._heroParallaxInitialized = true;
     const heroParallax = document.getElementById('hero-parallax');
     if (!heroParallax) return;
 
@@ -1003,9 +1102,11 @@ let aiFpsLastTime = performance.now();
 let aiFpsFrameCount = 0;
 
 function init3DAiCore() {
+    if (window._aiCoreInitialized) return;
     const canvas = document.getElementById('ai-three-canvas');
     const container = document.getElementById('ai-canvas-wrapper');
     if (!canvas || !container) return;
+    window._aiCoreInitialized = true;
 
     if (typeof THREE === 'undefined') {
         initFallback2DAiCore(canvas, container);
@@ -1028,7 +1129,7 @@ function init3DAiCore() {
         aiCoreRenderer.setSize(width, height);
         aiCoreRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        const currentColor = getComputedStyle(root).getPropertyValue('--accent').trim() || '#FF5E3A';
+        const currentColor = getComputedStyle(root).getPropertyValue('--accent').trim() || '#00E5FF';
 
         // 1. Outer Geodesic Wireframe
         const icoGeo = new THREE.IcosahedronGeometry(2.0, 2);
@@ -1213,10 +1314,20 @@ function init3DAiCore() {
 // 2D Canvas Fallback
 function initFallback2DAiCore(canvas, container) {
     const ctx = canvas.getContext('2d');
-    let width = container.clientWidth;
-    let height = container.clientHeight;
+    if (!ctx) return;
+    let width = container.clientWidth || 320;
+    let height = container.clientHeight || 320;
     canvas.width = width;
     canvas.height = height;
+
+    window.addEventListener('resize', () => {
+        if (container.clientWidth && container.clientHeight) {
+            width = container.clientWidth;
+            height = container.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+    });
 
     let rotY = 0;
     let rotX = 0;
@@ -1237,7 +1348,7 @@ function initFallback2DAiCore(canvas, container) {
         ctx.clearRect(0, 0, width, height);
         const cx = width / 2;
         const cy = height / 2;
-        const color = getComputedStyle(root).getPropertyValue('--accent').trim() || '#FF5E3A';
+        const color = getComputedStyle(root).getPropertyValue('--accent').trim() || '#00E5FF';
 
         rotY += 0.01;
         rotX += 0.005;
@@ -1267,7 +1378,7 @@ function initFallback2DAiCore(canvas, container) {
                 if (d < 45) {
                     ctx.globalAlpha = 1 - d / 45;
                     ctx.beginPath();
-                    ctx.moveTo(project[i].x, projected[i].y);
+                    ctx.moveTo(projected[i].x, projected[i].y);
                     ctx.lineTo(projected[j].x, projected[j].y);
                     ctx.stroke();
                 }
@@ -1296,7 +1407,7 @@ function playCyberBeep(freq = 600, type = 'sine', duration = 0.08) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
         if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
+            audioCtx.resume().catch(() => {});
         }
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
@@ -1421,6 +1532,9 @@ const aiKnowledge = [
 ];
 
 function initAiDialogue() {
+    if (window._aiDialogueInitialized) return;
+    window._aiDialogueInitialized = true;
+
     const form = document.getElementById('ai-chat-form');
     const input = document.getElementById('ai-user-input');
     const chatBody = document.getElementById('ai-chat-body');
@@ -1438,14 +1552,16 @@ function initAiDialogue() {
 
     if (clearBtn) {
         clearBtn.addEventListener('click', () => {
-            chatBody.innerHTML = `
-                <div class="ai-msg bot">
-                    <div class="msg-author">AETHON [SYSTEM]</div>
-                    <div class="msg-bubble">
-                        Conversation log purged. Neural buffer re-initialized. How may I assist your exploration of Prateek's work?
+            if (chatBody) {
+                chatBody.innerHTML = `
+                    <div class="ai-msg bot">
+                        <div class="msg-author">AETHON [SYSTEM]</div>
+                        <div class="msg-bubble">
+                            Conversation log purged. Neural buffer re-initialized. How may I assist your exploration of Prateek's work?
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            }
             triggerAiReaction("BUFFER RESET");
         });
     }
@@ -1503,6 +1619,7 @@ function initAiDialogue() {
     }
 
     function appendAiMessage(sender, htmlContent) {
+        if (!chatBody) return;
         const msgDiv = document.createElement('div');
         msgDiv.className = `ai-msg ${sender}`;
 
@@ -1517,21 +1634,26 @@ function initAiDialogue() {
     }
 
     function executeAiAction(action) {
+        function smoothScrollTo(el) {
+            if (!el) return;
+            if (typeof lenis !== 'undefined' && lenis) {
+                lenis.scrollTo(el, { offset: -30, duration: 1.2 });
+            } else {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
         if (action.startsWith('theme_')) {
             const color = action.replace('theme_', '');
             applyTheme(color);
         } else if (action === 'scroll_projects') {
-            const el = document.getElementById('projects');
-            if (el && lenis) lenis.scrollTo(el);
+            smoothScrollTo(document.getElementById('projects'));
         } else if (action === 'scroll_skills') {
-            const el = document.getElementById('skills');
-            if (el && lenis) lenis.scrollTo(el);
+            smoothScrollTo(document.getElementById('skills'));
         } else if (action === 'scroll_contact') {
-            const el = document.getElementById('contact');
-            if (el && lenis) lenis.scrollTo(el);
+            smoothScrollTo(document.getElementById('contact'));
         } else if (action === 'scroll_journey') {
-            const el = document.getElementById('journey-pin');
-            if (el && lenis) lenis.scrollTo(el);
+            smoothScrollTo(document.getElementById('journey-pin'));
         } else if (action === 'toggle_avatar') {
             if (typeof window.toggleAvatarMode === 'function') {
                 const newMode = window.toggleAvatarMode();
@@ -1551,6 +1673,8 @@ function initAiDialogue() {
 let currentAvatarMode = 'anime';
 
 function initAvatarToggle() {
+    if (window._avatarToggleInitialized) return;
+    window._avatarToggleInitialized = true;
     const btnAnime = document.getElementById('btn-avatar-anime');
     const btnReal = document.getElementById('btn-avatar-real');
     const portraitImg = document.getElementById('hero-portrait-img');

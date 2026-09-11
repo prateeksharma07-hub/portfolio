@@ -1,27 +1,28 @@
 :root {
-    /* Base Colors - Cinematic Slate / Obsidian from reference */
-    --bg-color: #0b0f15;
-    --bg-secondary: #10151f;
-    --text-primary: #F5F7FA;
-    --text-secondary: #8E95A5;
-    --text-light: #F5F7FA;
-    --text-dim: #8E95A5;
+    /* Base Colors - Cyber Slate Dimmed (High-tech navy slate, easy on the eyes) */
+    --bg-color: #151b26;
+    --bg-secondary: #1c2433;
+    --bg-tertiary: #232d3f;
+    --text-primary: #FFFFFF;
+    --text-secondary: #94A3B8;
+    --text-light: #F8FAFC;
+    --text-dim: #64748B;
     
-    /* Dynamic Theme Colors (Default Cyber Coral / Sunset Orange from reference) */
-    --accent: #FF5E3A; 
-    --accent-glow: rgba(255, 94, 58, 0.4);
-    --accent-faded: rgba(255, 94, 58, 0.12);
+    /* Dynamic Theme Colors (Default Electric Cyan with high-tech glow) */
+    --accent: #00E5FF; 
+    --accent-glow: rgba(0, 229, 255, 0.38);
+    --accent-faded: rgba(0, 229, 255, 0.12);
     
     /* Terminal Colors */
     --term-red: #ff5f56;
     --term-yellow: #ffbd2e;
-    --term-green: #27c93f;
-    --term-bg: rgba(14, 18, 26, 0.88);
+    --term-green: #00FF66;
+    --term-bg: rgba(20, 26, 38, 0.92);
 
-    /* UI Elements */
-    --border-color: rgba(255, 255, 255, 0.08);
-    --glass-bg: rgba(16, 21, 30, 0.6);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    /* UI Elements - Illuminated frosted glass */
+    --border-color: rgba(255, 255, 255, 0.10);
+    --glass-bg: rgba(28, 36, 51, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.12);
 
     /* Fonts */
     --font-heading: 'Outfit', sans-serif;
@@ -47,6 +48,11 @@
 
 body {
     background-color: var(--bg-color);
+    background-image: 
+        radial-gradient(at 15% 15%, rgba(0, 229, 255, 0.08) 0px, transparent 55%),
+        radial-gradient(at 85% 85%, rgba(255, 94, 58, 0.06) 0px, transparent 50%),
+        radial-gradient(at 50% 30%, rgba(30, 42, 66, 0.4) 0px, transparent 70%);
+    background-attachment: fixed;
     color: var(--text-primary);
     font-family: var(--font-body);
     overflow-x: hidden;
@@ -246,7 +252,7 @@ h1, h2, h3, h4 {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     position: relative;
     overflow: hidden;
     padding-top: 110px;
@@ -268,8 +274,8 @@ h1, h2, h3, h4 {
     z-index: 2;
     width: 100%;
     max-width: var(--container-width);
-    margin: 0 auto;
-    padding: 0 6vw;
+    margin: auto auto;
+    padding: 2rem 6vw 3.5rem 6vw;
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;
     gap: 4vw;
@@ -290,8 +296,8 @@ h1, h2, h3, h4 {
     align-items: center;
     gap: 8px;
     padding: 6px 14px;
-    background: rgba(255, 94, 58, 0.08);
-    border: 1px solid rgba(255, 94, 58, 0.25);
+    background: var(--accent-faded);
+    border: 1px solid var(--accent-glow);
     border-radius: 20px;
     font-family: var(--font-mono);
     font-size: 0.72rem;
@@ -299,7 +305,7 @@ h1, h2, h3, h4 {
     color: var(--accent);
     width: fit-content;
     margin-bottom: 0.3rem;
-    box-shadow: 0 0 15px rgba(255, 94, 58, 0.08);
+    box-shadow: 0 0 15px var(--accent-faded);
 }
 
 .status-indicator-dot {
@@ -365,15 +371,97 @@ h1, h2, h3, h4 {
 
 .hero-title {
     font-family: var(--font-heading);
-    font-size: clamp(3.2rem, 6.2vw, 5.8rem);
+    font-size: clamp(3.4rem, 6.4vw, 5.8rem);
     font-weight: 900;
-    line-height: 0.96;
-    letter-spacing: -0.03em;
-    background: linear-gradient(180deg, #FFFFFF 35%, rgba(255, 255, 255, 0.55) 100%);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0.5rem 0 1rem 0;
+    position: relative;
+    user-select: none;
+}
+
+.title-word-main {
+    color: #FFFFFF;
+    display: inline-block;
+    letter-spacing: -0.015em;
+    text-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.9),
+        0 8px 30px rgba(0, 0, 0, 0.7),
+        0 0 45px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.hero-title:hover .title-word-main {
+    text-shadow: 
+        0 2px 12px rgba(0, 0, 0, 0.95),
+        0 0 50px rgba(255, 255, 255, 0.5);
+}
+
+.title-word-accent {
+    position: relative;
+    display: inline-block;
+    color: var(--accent);
+    background: linear-gradient(135deg, #FFFFFF 0%, var(--accent) 35%, #00C6FF 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin: 0.4rem 0 0.8rem 0;
+    filter: drop-shadow(0 0 24px var(--accent-glow)) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.85));
+    animation: cyberTitleAura 3.5s ease-in-out infinite alternate;
+    padding-bottom: 4px;
+}
+
+/* Fallback for high contrast / unsupported background-clip */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+    .title-word-accent {
+        color: var(--accent);
+        -webkit-text-fill-color: var(--accent);
+    }
+}
+
+/* Animated Cyber Accent Light Bar */
+.title-word-accent::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 68%;
+    height: 3.5px;
+    background: linear-gradient(90deg, var(--accent) 0%, rgba(0, 229, 255, 0.5) 60%, transparent 100%);
+    border-radius: 4px;
+    box-shadow: 0 0 14px var(--accent-glow);
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-title:hover .title-word-accent::after {
+    width: 100%;
+}
+
+/* High-Tech Terminal Cyber Cursor */
+.title-cyber-cursor {
+    display: inline-block;
+    color: var(--accent);
+    -webkit-text-fill-color: var(--accent);
+    margin-left: 4px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.88em;
+    vertical-align: baseline;
+    animation: cyberCursorPulse 1s steps(2, start) infinite;
+    filter: drop-shadow(0 0 12px var(--accent-glow));
+}
+
+@keyframes cyberTitleAura {
+    0% {
+        filter: drop-shadow(0 0 20px var(--accent-glow)) drop-shadow(0 4px 14px rgba(0, 0, 0, 0.8));
+    }
+    100% {
+        filter: drop-shadow(0 0 38px var(--accent-glow)) drop-shadow(0 0 70px rgba(0, 229, 255, 0.3)) drop-shadow(0 4px 18px rgba(0, 0, 0, 0.9));
+    }
+}
+
+@keyframes cyberCursorPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 .hero-description {
@@ -605,7 +693,7 @@ h1, h2, h3, h4 {
     gap: 4px;
     padding: 4px;
     border-radius: 20px;
-    background: rgba(11, 15, 22, 0.88);
+    background: rgba(24, 32, 47, 0.88);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -660,7 +748,7 @@ h1, h2, h3, h4 {
     font-size: 0.75rem;
     letter-spacing: 0.5px;
     color: var(--text-primary);
-    background: rgba(16, 21, 30, 0.75);
+    background: rgba(28, 36, 51, 0.80);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -723,16 +811,16 @@ h1, h2, h3, h4 {
 
 /* --- Tech Skills Ticker (Reference-Matching) --- */
 .hero-ticker {
-    position: absolute;
-    bottom: 70px;
-    left: 0;
+    position: relative;
     width: 100%;
+    margin-top: auto;
     overflow: hidden;
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
-    background: rgba(11, 15, 21, 0.75);
-    backdrop-filter: blur(10px);
-    z-index: 2;
+    background: rgba(20, 26, 38, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    z-index: 3;
 }
 
 .ticker-track {
@@ -865,7 +953,7 @@ h1, h2, h3, h4 {
 }
 
 .pillar-item:hover .marker-dot {
-    background: #0b0f15;
+    background: var(--bg-color);
 }
 
 .pillar-box {
@@ -1040,7 +1128,7 @@ h1, h2, h3, h4 {
     min-height: 480px;
     border-radius: 14px;
     overflow: hidden;
-    background: radial-gradient(circle at center, rgba(20, 26, 38, 0.8) 0%, rgba(10, 14, 20, 0.95) 100%);
+    background: radial-gradient(circle at center, rgba(32, 42, 60, 0.85) 0%, rgba(18, 24, 36, 0.95) 100%);
     border: 1px solid rgba(255, 255, 255, 0.06);
     display: flex;
     align-items: center;
@@ -1075,7 +1163,7 @@ h1, h2, h3, h4 {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(11, 15, 21, 0.7);
+    background: rgba(24, 32, 47, 0.75);
     backdrop-filter: blur(8px);
     padding: 6px 12px;
     border-radius: 20px;
@@ -1101,7 +1189,7 @@ h1, h2, h3, h4 {
 .hud-metrics {
     display: flex;
     gap: 12px;
-    background: rgba(11, 15, 21, 0.7);
+    background: rgba(24, 32, 47, 0.75);
     backdrop-filter: blur(8px);
     padding: 6px 12px;
     border-radius: 20px;
@@ -1120,7 +1208,7 @@ h1, h2, h3, h4 {
     bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(11, 15, 21, 0.6);
+    background: rgba(24, 32, 47, 0.65);
     backdrop-filter: blur(8px);
     padding: 6px 14px;
     border-radius: 20px;
@@ -1137,7 +1225,7 @@ h1, h2, h3, h4 {
 .ai-dialogue-side {
     display: flex;
     flex-direction: column;
-    background: rgba(11, 15, 22, 0.85);
+    background: rgba(22, 29, 42, 0.9);
     border-radius: 14px;
     border: 1px solid rgba(255, 255, 255, 0.06);
     overflow: hidden;
@@ -1621,7 +1709,7 @@ h1, h2, h3, h4 {
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
-    background: rgba(13, 17, 25, 0.78);
+    background: rgba(26, 34, 48, 0.78);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -2140,7 +2228,7 @@ h1, h2, h3, h4 {
 footer {
     padding: 3rem 0 2.2rem 0;
     border-top: 1px solid var(--border-color);
-    background: rgba(11, 15, 21, 0.85);
+    background: rgba(18, 24, 35, 0.88);
     position: relative;
     z-index: 2;
 }
@@ -2654,7 +2742,7 @@ footer {
     width: 100%;
     max-width: 1240px;
     pointer-events: auto;
-    background: rgba(11, 15, 23, 0.82);
+    background: rgba(24, 32, 47, 0.82);
     backdrop-filter: blur(24px) saturate(190%);
     -webkit-backdrop-filter: blur(24px) saturate(190%);
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -3109,6 +3197,9 @@ footer {
     }
     .hud-v-sep {
         display: none;
+    }
+    .hero {
+        padding-top: 145px;
     }
 }
 
