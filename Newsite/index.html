@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Girraj Sharma | B.Tech CSE (AI &amp; DS) Student &amp; Developer</title>
+  
+  <!-- SEO & Social Meta -->
+  <meta name="description" content="Portfolio of Girraj Sharma — 1st-year B.Tech CSE (AI & DS) student at JECRC University, Jaipur. Passionate about C programming, AI/DS fundamentals, and software development.">
+  <meta name="keywords" content="Girraj Sharma, JECRC University, B.Tech CSE, AI and Data Science, Student Developer, C Programming, Jaipur">
+  <meta name="author" content="Girraj Sharma">
+  <meta property="og:title" content="Girraj Sharma | Student Developer Portfolio">
+  <meta property="og:description" content="1st-year B.Tech CSE (AI & DS) student at JECRC University, Jaipur focusing on C programming, AI fundamentals, and software logic.">
+  <meta property="og:type" content="website">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+
+  <!-- Ambient Glow Canvas Background -->
+  <canvas id="bg-canvas"></canvas>
+  <div class="ambient-glow ambient-glow-1"></div>
+  <div class="ambient-glow ambient-glow-2"></div>
+
+  <!-- Content Wrapper -->
+  <div class="content-wrapper">
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+      <div class="container nav-container">
+        <a href="#hero" class="nav-brand" aria-label="Girraj Sharma Portfolio Top">
+          <div class="brand-badge">GS</div>
+          <div class="brand-info">
+            <span class="brand-name">Girraj Sharma</span>
+            <span class="brand-role">B.Tech CSE (AI &amp; DS)</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <ul class="nav-links">
+          <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+          <li class="nav-item"><a href="#skills" class="nav-link">Skills</a></li>
+          <li class="nav-item"><a href="#c-lab" class="nav-link">C Lab</a></li>
+          <li class="nav-item"><a href="#projects" class="nav-link">Projects</a></li>
+          <li class="nav-item"><a href="#education" class="nav-link">Education</a></li>
+          <li class="nav-item"><a href="#milestones" class="nav-link">Milestones</a></li>
+          <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <a href="#contact" class="nav-cta-btn">
+            <span>Get in Touch</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <button class="mobile-toggle" id="mobile-menu-btn" aria-label="Open mobile navigation menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Drawer -->
+      <div class="mobile-menu-drawer" id="mobile-drawer">
+        <a href="#about" class="mobile-link">About Me</a>
+        <a href="#skills" class="mobile-link">Skills &amp; Tech</a>
+        <a href="#c-lab" class="mobile-link">Interactive C Lab</a>
+        <a href="#projects" class="mobile-link">Projects &amp; Learning</a>
+        <a href="#education" class="mobile-link">Education</a>
+        <a href="#milestones" class="mobile-link">Milestones</a>
+        <a href="#contact" class="mobile-link">Contact</a>
+      </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="hero-section" id="hero">
+      <div class="container">
+        <div class="hero-grid">
+          
+          <!-- Left Column: Bio & CTAs -->
+          <div class="hero-content">
+            <div class="status-pill">
+              <span class="pulse-dot"></span>
+              <span>1st-Year Undergrad • Actively Learning &amp; Building</span>
+            </div>
+
+            <h1 class="hero-title">
+              Hi, I'm <span class="gradient-text">Girraj Sharma</span>
+            </h1>
+
+            <div class="hero-subtitle-box">
+              <div class="hero-degree">B.Tech Computer Science &amp; Engineering</div>
+              <div class="hero-university">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                Specialization in AI &amp; Data Science • JECRC University, Jaipur (2026–2030)
+              </div>
+            </div>
+
+            <p class="hero-tagline">
+              Curious first-year engineering student building rock-solid foundations in <strong>C programming</strong>, diving deep into <strong>Artificial Intelligence &amp; Data Science</strong>, and crafting software logic from the ground up without skipping the fundamentals.
+            </p>
+
+            <div class="hero-cta-group">
+              <a href="#projects" class="btn-primary">
+                <span>View Projects &amp; Learning</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a href="#contact" class="btn-secondary">
+                <span>Contact Me</span>
+              </a>
+            </div>
+
+            <!-- Social Links Strip -->
+            <div class="hero-social-strip">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="hero-social-link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                <span>GitHub</span>
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="hero-social-link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                <span>LinkedIn</span>
+              </a>
+              <a href="mailto:girraj.sharma@example.com" class="hero-social-link" id="hero-email-quick">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" radius="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <span>Email</span>
+              </a>
+            </div>
+            <!-- Quick Stats Strip -->
+            <div class="hero-stats-banner">
+              <div class="stat-item-box">
+                <div class="stat-val">1st Year</div>
+                <div class="stat-lbl">Undergraduate</div>
+              </div>
+              <div class="stat-item-box">
+                <div class="stat-val">C &amp; Math</div>
+                <div class="stat-lbl">Core Focus</div>
+              </div>
+              <div class="stat-item-box">
+                <div class="stat-val">AI &amp; DS</div>
+                <div class="stat-lbl">Specialization</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+    <!-- ABOUT ME SECTION -->
+    <section id="about" class="about-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">About Me</span>
+          <h2 class="section-title">Foundations First, <span class="gradient-text">Future-Ready Always</span></h2>
+          <p class="section-desc">A transparent look at who I am, what I am learning right now, and how I approach software engineering as a student.</p>
+        </div>
+
+        <div class="about-grid">
+          <!-- Main Narrative -->
+          <div class="about-card-main">
+            <div class="about-highlight-quote">
+              "Before leaping into high-level abstractions and complex frameworks, I believe in mastering the core building blocks: logic, memory, and algorithmic problem solving."
+            </div>
+
+            <p class="about-text">
+              I am Girraj Sharma, currently a 1st-year Bachelor of Technology student in <strong>Computer Science &amp; Engineering with a specialization in Artificial Intelligence and Data Science</strong> at <strong>JECRC University, Jaipur (2026–2030)</strong>.
+            </p>
+
+            <p class="about-text">
+              Rather than pretending to have years of corporate experience, my portfolio reflects where I truly stand: an enthusiastic, disciplined student developer with a rigorous learning mindset. I spend my days writing C programs to understand how computers execute instructions, studying discrete mathematics, and exploring the conceptual foundations of artificial intelligence and data-driven algorithms.
+            </p>
+
+            <!-- Learning Pillars -->
+            <div class="about-pillars">
+              <div class="pillar-item">
+                <div class="pillar-icon">⚙️</div>
+                <div class="pillar-title">C &amp; Systems Logic</div>
+                <div class="pillar-desc">Learning control flow, pointers, memory addressing, and writing deterministic code.</div>
+              </div>
+              <div class="pillar-item">
+                <div class="pillar-icon">🧠</div>
+                <div class="pillar-title">AI &amp; Data Science</div>
+                <div class="pillar-desc">Studying the mathematical underpinnings of machine intelligence, linear algebra, and data flow.</div>
+              </div>
+              <div class="pillar-item">
+                <div class="pillar-icon">🧩</div>
+                <div class="pillar-title">Problem Solving</div>
+                <div class="pillar-desc">Analyzing edge cases, mathematical patterns, modulo arithmetic, and computational efficiency.</div>
+              </div>
+              <div class="pillar-item">
+                <div class="pillar-icon">🌐</div>
+                <div class="pillar-title">Web &amp; Tooling</div>
+                <div class="pillar-desc">Learning semantic HTML5, modern CSS, and JavaScript to bring tools and interfaces to life.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Side Panel: Mindset & AI Curiosity -->
+          <div class="about-side-panel">
+            <div class="curiosity-card">
+              <h3>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                <span>Why AI &amp; Data Science?</span>
+              </h3>
+              <p>
+                What excites me most about Computer Science is how algorithms can discover patterns in massive datasets that humans could never process manually. Choosing the AI &amp; DS branch at JECRC University lets me bridge rigorous computer science with predictive modeling, neural computation, and automated decision making.
+              </p>
+              <div class="curiosity-tags">
+                <span class="curiosity-tag">Statistical Intuition</span>
+                <span class="curiosity-tag">Algorithmic Thinking</span>
+                <span class="curiosity-tag">Curiosity-Driven</span>
+              </div>
+            </div>
+
+            <div class="learning-mindset-box">
+              <h4>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Student Developer Commitments</span>
+              </h4>
+              <ul class="checklist">
+                <li>
+                  <span class="check-icon">✓</span>
+                  <span><strong>Write real code daily:</strong> Practicing logic through C programs, lab challenges, and exercises.</span>
+                </li>
+                <li>
+                  <span class="check-icon">✓</span>
+                  <span><strong>Understand "Why", not just "How":</strong> Never copy-pasting code without dissecting the underlying mechanics.</span>
+                </li>
+                <li>
+                  <span class="check-icon">✓</span>
+                  <span><strong>Document the journey:</strong> Building transparent projects that mark tangible progress.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS SECTION -->
+    <section id="skills" class="skills-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Technical Competencies</span>
+          <h2 class="section-title">Current Skills &amp; <span class="gradient-text">Learning Focus</span></h2>
+          <p class="section-desc">An honest breakdown of concepts I have mastered, topics I am actively practicing, and areas I am currently exploring.</p>
+        </div>
+
+        <div class="skills-grid">
+          
+          <!-- Category 1: C Programming -->
+          <div class="skill-category-card">
+            <div class="skill-header">
+              <div class="skill-header-left">
+                <div class="skill-badge-icon icon-cyan">C</div>
+                <div class="skill-title-group">
+                  <h3>C Language</h3>
+                  <span class="skill-status-text">Primary Language in University</span>
+                </div>
+              </div>
+              <span class="skill-level-badge badge-core">Core Focus</span>
+            </div>
+
+            <div class="skill-items-list">
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Control Flow &amp; Conditionals</span>
+                  <span class="skill-status-text">Proficient</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-c"></div></div>
+              </div>
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Functions &amp; Recursion Basics</span>
+                  <span class="skill-status-text">Active Practice</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-c" style="width: 70%;"></div></div>
+              </div>
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Arrays, Strings &amp; Memory Basics</span>
+                  <span class="skill-status-text">In Progress</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-c" style="width: 62%;"></div></div>
+              </div>
+            </div>
+
+            <div class="skill-tags-cloud">
+              <span class="tech-tag">GCC</span>
+              <span class="tech-tag">C99</span>
+              <span class="tech-tag">Memory Addressing</span>
+              <span class="tech-tag">Pointers (Fundamentals)</span>
+              <span class="tech-tag">Structured Code</span>
+            </div>
+          </div>
+
+          <!-- Category 2: Programming Fundamentals & Logic -->
+          <div class="skill-category-card">
+            <div class="skill-header">
+              <div class="skill-header-left">
+                <div class="skill-badge-icon icon-indigo">🧩</div>
+                <div class="skill-title-group">
+                  <h3>Programming &amp; Problem Solving</h3>
+                  <span class="skill-status-text">Foundational CS Concepts</span>
+                </div>
+              </div>
+              <span class="skill-level-badge badge-core">Core Focus</span>
+            </div>
+
+            <div class="skill-items-list">
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Algorithmic Logic &amp; Flowcharts</span>
+                  <span class="skill-status-text">Solid</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-algo"></div></div>
+              </div>
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Edge Case Analysis &amp; Debugging</span>
+                  <span class="skill-status-text">Practicing</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-prob"></div></div>
+              </div>
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Time &amp; Space Complexity Basics</span>
+                  <span class="skill-status-text">Conceptual</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-algo" style="width: 55%;"></div></div>
+              </div>
+            </div>
+
+            <div class="skill-tags-cloud">
+              <span class="tech-tag">Dry-Running Code</span>
+              <span class="tech-tag">Modular Functions</span>
+              <span class="tech-tag">Mathematical Logic</span>
+              <span class="tech-tag">Edge Tests</span>
+            </div>
+          </div>
+
+          <!-- Category 3: AI & Data Science Fundamentals -->
+          <div class="skill-category-card">
+            <div class="skill-header">
+              <div class="skill-header-left">
+                <div class="skill-badge-icon icon-emerald">📊</div>
+                <div class="skill-title-group">
+                  <h3>AI &amp; Data Science</h3>
+                  <span class="skill-status-text">Degree Specialization</span>
+                </div>
+              </div>
+              <span class="skill-level-badge badge-foundations">Foundations</span>
+            </div>
+
+            <div class="skill-items-list">
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Core AI Concepts &amp; Machine Learning Ideas</span>
+                  <span class="skill-status-text">Exploring</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-ai"></div></div>
+              </div>
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Linear Algebra &amp; Statistics for CS</span>
+                  <span class="skill-status-text">Studying</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-ds"></div></div>
+              </div>
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Python Fundamentals for Data Science</span>
+                  <span class="skill-status-text">Starting</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-ds" style="width: 45%;"></div></div>
+              </div>
+            </div>
+
+            <div class="skill-tags-cloud">
+              <span class="tech-tag">Probability Basics</span>
+              <span class="tech-tag">Supervised vs Unsupervised</span>
+              <span class="tech-tag">Data Visualization</span>
+              <span class="tech-tag">Python Syntax</span>
+            </div>
+          </div>
+
+          <!-- Category 4: Web Development (In Progress) -->
+          <div class="skill-category-card">
+            <div class="skill-header">
+              <div class="skill-header-left">
+                <div class="skill-badge-icon icon-amber">🌐</div>
+                <div class="skill-title-group">
+                  <h3>Web Fundamentals</h3>
+                  <span class="skill-status-text">Building &amp; Showcasing</span>
+                </div>
+              </div>
+              <span class="skill-level-badge badge-learning">Learning in Progress</span>
+            </div>
+
+            <div class="skill-items-list">
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Semantic HTML5 &amp; Accessibility</span>
+                  <span class="skill-status-text">Active</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-web"></div></div>
+              </div>
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Modern CSS3 (Flexbox, Grid, Themes)</span>
+                  <span class="skill-status-text">Active</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-web" style="width: 65%;"></div></div>
+              </div>
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">JavaScript DOM &amp; Interactivity</span>
+                  <span class="skill-status-text">Learning</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-web" style="width: 50%;"></div></div>
+              </div>
+            </div>
+
+            <div class="skill-tags-cloud">
+              <span class="tech-tag">Responsive Design</span>
+              <span class="tech-tag">CSS Custom Properties</span>
+              <span class="tech-tag">DOM Manipulation</span>
+              <span class="tech-tag">Vanilla JS</span>
+            </div>
+          </div>
+
+          <!-- Category 5: Developer Tools & Workflow -->
+          <div class="skill-category-card">
+            <div class="skill-header">
+              <div class="skill-header-left">
+                <div class="skill-badge-icon icon-indigo">🛠️</div>
+                <div class="skill-title-group">
+                  <h3>Tools &amp; Environment</h3>
+                  <span class="skill-status-text">Daily Workflow</span>
+                </div>
+              </div>
+              <span class="skill-level-badge badge-core">Essential</span>
+            </div>
+
+            <div class="skill-items-list">
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Visual Studio Code Setup</span>
+                  <span class="skill-status-text">Daily Driver</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-c" style="width: 85%;"></div></div>
+              </div>
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Git &amp; GitHub Version Control</span>
+                  <span class="skill-status-text">Committing</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-algo" style="width: 65%;"></div></div>
+              </div>
+              <div class="skill-sub-item">
+                <div class="skill-sub-header">
+                  <span class="skill-name">Command Line &amp; PowerShell</span>
+                  <span class="skill-status-text">Comfortable</span>
+                </div>
+                <div class="skill-progress-track"><div class="skill-progress-fill fill-prob" style="width: 70%;"></div></div>
+              </div>
+            </div>
+
+            <div class="skill-tags-cloud">
+              <span class="tech-tag">VS Code</span>
+              <span class="tech-tag">Git</span>
+              <span class="tech-tag">GitHub</span>
+              <span class="tech-tag">MinGW / GCC</span>
+              <span class="tech-tag">Markdown</span>
+            </div>
+          </div>
+
+          <!-- Category 6: Future Goals / What's Next -->
+          <div class="skill-category-card" style="border-style: dashed; border-color: rgba(99, 102, 241, 0.35);">
+            <div class="skill-header">
+              <div class="skill-header-left">
+                <div class="skill-badge-icon icon-emerald">🎯</div>
+                <div class="skill-title-group">
+                  <h3>Future Horizons</h3>
+                  <span class="skill-status-text">Upcoming 2nd Year Goals</span>
+                </div>
+              </div>
+              <span class="skill-level-badge badge-foundations">Roadmap</span>
+            </div>
+
+            <p style="font-size: 0.86rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px;">
+              As I progress toward my 2nd year at JECRC University, I plan to transition from basic C to Data Structures &amp; Algorithms (DSA), and start hands-on Python projects with NumPy, Pandas, and Scikit-Learn.
+            </p>
+
+            <div class="skill-tags-cloud">
+              <span class="tech-tag" style="color: var(--cyan-bright);">DSA in C/C++</span>
+              <span class="tech-tag" style="color: var(--cyan-bright);">NumPy &amp; Pandas</span>
+              <span class="tech-tag" style="color: var(--cyan-bright);">Database / SQL</span>
+              <span class="tech-tag" style="color: var(--cyan-bright);">Object Oriented Programming</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE C CODE LAB & SIMULATOR SECTION -->
+    <section id="c-lab" class="interactive-lab-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Interactive Experience</span>
+          <h2 class="section-title">The C Logic <span class="gradient-text">Live Simulator</span></h2>
+          <p class="section-desc">Experience my actual C code in action! Test integers interactively below to see how the nested conditional control flow executes in real time.</p>
+        </div>
+
+        <div class="lab-container">
+          <!-- Left: The Source Code -->
+          <div class="lab-code-column">
+            <div class="lab-title-bar">
+              <div class="lab-file-badge">
+                <span class="c-badge">C</span>
+                <span>cprogramming.c / NumberClassifier.c</span>
+              </div>
+              <span style="font-size: 0.72rem; color: #10b981; font-family: var(--font-mono);">● Verified Source</span>
+            </div>
+
+            <div class="lab-code-block">
+              <div class="code-line"><span class="line-num">1</span><span><span class="syn-keyword">#include</span> <span class="syn-string">&lt;stdio.h&gt;</span></span></div>
+              <div class="code-line"><span class="line-num">2</span><span></span></div>
+              <div class="code-line"><span class="line-num">3</span><span><span class="syn-type">int</span> <span class="syn-func">main</span>() {</span></div>
+              <div class="code-line"><span class="line-num">4</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-type">int</span> <span class="syn-var">a</span>;</span></div>
+              <div class="code-line"><span class="line-num">5</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-func">printf</span>(<span class="syn-string">"Enter a : "</span>);</span></div>
+              <div class="code-line"><span class="line-num">6</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-func">scanf</span>(<span class="syn-string">"%d"</span>, &amp;<span class="syn-var">a</span>);</span></div>
+              <div class="code-line"><span class="line-num">7</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">if</span> (<span class="syn-var">a</span> &gt;= <span class="syn-string">0</span>) {</span></div>
+              <div class="code-line"><span class="line-num">8</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">if</span> (<span class="syn-var">a</span> == <span class="syn-string">0</span>) {</span></div>
+              <div class="code-line"><span class="line-num">9</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-func">printf</span>(<span class="syn-string">"A is zero"</span>);</span></div>
+              <div class="code-line"><span class="line-num">10</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="syn-keyword">else</span> {</span></div>
+              <div class="code-line"><span class="line-num">11</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">if</span> ((<span class="syn-var">a</span> % <span class="syn-string">2</span>) == <span class="syn-string">0</span>) {</span></div>
+              <div class="code-line"><span class="line-num">12</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-func">printf</span>(<span class="syn-string">"A is even"</span>);</span></div>
+              <div class="code-line"><span class="line-num">13</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="syn-keyword">else</span> {</span></div>
+              <div class="code-line"><span class="line-num">14</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-func">printf</span>(<span class="syn-string">"A is odd"</span>);</span></div>
+              <div class="code-line"><span class="line-num">15</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span></div>
+              <div class="code-line"><span class="line-num">16</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span></div>
+              <div class="code-line"><span class="line-num">17</span><span>&nbsp;&nbsp;&nbsp;&nbsp;} <span class="syn-keyword">else</span> {</span></div>
+              <div class="code-line"><span class="line-num">18</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-func">printf</span>(<span class="syn-string">"A is negative"</span>);</span></div>
+              <div class="code-line"><span class="line-num">19</span><span>&nbsp;&nbsp;&nbsp;&nbsp;}</span></div>
+              <div class="code-line"><span class="line-num">20</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-keyword">return</span> <span class="syn-string">0</span>;</span></div>
+              <div class="code-line"><span class="line-num">21</span><span>}</span></div>
+            </div>
+          </div>
+
+          <!-- Right: Interactive Input & Terminal Screen -->
+          <div class="lab-runner-column">
+            <div class="runner-header">
+              <h3>Live Console Execution</h3>
+              <p>Type any integer into the field below to simulate the execution of the program in a C runtime.</p>
+            </div>
+
+            <!-- Input Box -->
+            <div class="runner-input-card">
+              <label for="c-input-number" class="input-label">INPUT STREAM (stdin):</label>
+              <div class="input-control-row">
+                <input type="number" id="c-input-number" class="c-input-box" placeholder="e.g. 42, -7, 0" value="42">
+                <button id="btn-run-simulation" class="btn-run-c">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <span>Run C Code</span>
+                </button>
+              </div>
+
+              <!-- Quick Presets -->
+              <div class="quick-test-row">
+                <span class="quick-label">Test Presets:</span>
+                <button class="btn-test-chip" data-val="0">0 (Zero)</button>
+                <button class="btn-test-chip" data-val="28">28 (Positive Even)</button>
+                <button class="btn-test-chip" data-val="17">17 (Positive Odd)</button>
+                <button class="btn-test-chip" data-val="-14">-14 (Negative)</button>
+                <button class="btn-test-chip" data-val="1024">1024 (Power of 2)</button>
+              </div>
+            </div>
+
+            <!-- Virtual Terminal Output -->
+            <div class="terminal-screen" id="terminal-screen">
+              <div class="terminal-title">TERMINAL // GCC COMPILER OUTPUT (STDOUT)</div>
+              <div class="terminal-prompt">$ gcc cprogramming.c -o cprog &amp;&amp; ./cprog</div>
+              <div class="terminal-prompt">Enter a : 42</div>
+              <div class="terminal-result-line" id="term-result">
+                <span>Output:</span>
+                <span id="term-output-text">A is even</span>
+              </div>
+              <div class="terminal-analysis" id="term-analysis">
+                Logic Path: a >= 0 (TRUE) ➔ a == 0 (FALSE) ➔ a % 2 == 0 (TRUE) ➔ Exit Code 0.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS & CURRENT LEARNING SECTION -->
+    <section id="projects" class="projects-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Portfolio &amp; Roadmap</span>
+          <h2 class="section-title">Projects &amp; <span class="gradient-text">Learning Endeavors</span></h2>
+          <p class="section-desc">Real, honest student work: hands-on programs I have written, projects in active development, and upcoming AI/DS explorations.</p>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="project-filters">
+          <button class="filter-btn active" data-filter="all">All Items (4)</button>
+          <button class="filter-btn" data-filter="completed">Hands-On &amp; Built (2)</button>
+          <button class="filter-btn" data-filter="building">Currently Building (1)</button>
+          <button class="filter-btn" data-filter="upcoming">Upcoming Roadmap (1)</button>
+        </div>
+
+        <!-- Project Cards Grid -->
+        <div class="projects-grid">
+          
+          <!-- Project 1: C Number & Logic Analysis Suite -->
+          <div class="project-card" data-category="completed">
+            <div class="project-top-meta">
+              <span class="project-status-tag status-completed">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                Built &amp; Working
+              </span>
+              <span class="project-type-tag">C Language / Systems</span>
+            </div>
+
+            <h3 class="project-title">C Number Classifier &amp; Logic Suite</h3>
+            
+            <p class="project-description">
+              A foundational C program focused on decision structures, integer analysis, and arithmetic operations. Implements nested conditional branching to test signs, parity, and mathematical bounds with zero overhead.
+            </p>
+
+            <ul class="project-highlights">
+              <li>Handles positive, negative, zero, and boundary integer conditions.</li>
+              <li>Calculates parity via efficient modulo-two arithmetic.</li>
+              <li>Demonstrates clean GCC compilation and structured input validation.</li>
+            </ul>
+
+            <div class="project-tech-stack">
+              <span class="stack-pill">C</span>
+              <span class="stack-pill">GCC</span>
+              <span class="stack-pill">Control Flow</span>
+              <span class="stack-pill">Algorithms</span>
+            </div>
+
+            <div class="project-action-row">
+              <a href="#c-lab" class="project-link">
+                <span>Test in Live C Lab</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Project 2: Student Developer Portfolio -->
+          <div class="project-card" data-category="completed">
+            <div class="project-top-meta">
+              <span class="project-status-tag status-completed">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                Built &amp; Working
+              </span>
+              <span class="project-type-tag">Web Development</span>
+            </div>
+
+            <h3 class="project-title">Interactive Student Developer Portfolio</h3>
+            
+            <p class="project-description">
+              A high-performance personal web platform engineered to document my academic progression at JECRC University. Built with pure semantic HTML5, modern vanilla CSS, and JavaScript with an embedded interactive C runtime simulator.
+            </p>
+
+            <ul class="project-highlights">
+              <li>Glassmorphism UI design with dynamic ambient canvas background.</li>
+              <li>Interactive C code playground with real-time evaluation.</li>
+              <li>Zero bloated external libraries for instant page loading and 100% responsiveness.</li>
+            </ul>
+
+            <div class="project-tech-stack">
+              <span class="stack-pill">HTML5</span>
+              <span class="stack-pill">CSS3</span>
+              <span class="stack-pill">Vanilla JavaScript</span>
+              <span class="stack-pill">Canvas API</span>
+            </div>
+
+            <div class="project-action-row">
+              <a href="#hero" class="project-link">
+                <span>Viewing Currently</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Project 3: Terminal Student Record System (In Progress) -->
+          <div class="project-card" data-category="building">
+            <div class="project-top-meta">
+              <span class="project-status-tag status-building">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                Currently Building
+              </span>
+              <span class="project-type-tag">C Language / CLI</span>
+            </div>
+
+            <h3 class="project-title">Terminal Student Record &amp; Grade Analyzer</h3>
+            
+            <p class="project-description">
+              A terminal-based CLI application in C designed for university coursework. Leverages C `struct` types and file I/O (`fopen`, `fwrite`) to store student records, calculate semester GPAs, and sort results.
+            </p>
+
+            <ul class="project-highlights">
+              <li>Practicing custom data structures (`struct Student`) in C.</li>
+              <li>Persistent data storage using structured binary/text file handling.</li>
+              <li>Interactive CLI menu system with input sanitization.</li>
+            </ul>
+
+            <div class="project-tech-stack">
+              <span class="stack-pill">C</span>
+              <span class="stack-pill">File I/O</span>
+              <span class="stack-pill">Structs</span>
+              <span class="stack-pill">Data Management</span>
+            </div>
+
+            <div class="project-action-row">
+              <span style="font-size: 0.8rem; color: #fbbf24; font-family: var(--font-mono);">Phase: Coding &amp; Testing Structs</span>
+            </div>
+          </div>
+
+          <!-- Project 4: AI & Data Science Foundations Explorer (Upcoming) -->
+          <div class="project-card" data-category="upcoming">
+            <div class="project-top-meta">
+              <span class="project-status-tag status-upcoming">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                Upcoming Roadmap
+              </span>
+              <span class="project-type-tag">AI &amp; Data Science</span>
+            </div>
+
+            <h3 class="project-title">AI Exploratory Data Analysis &amp; Classifier</h3>
+            
+            <p class="project-description">
+              An upcoming hands-on research project using Python and Jupyter notebooks. Will focus on exploratory data analysis of academic datasets, feature correlation, and building an introductory linear classifier.
+            </p>
+
+            <ul class="project-highlights">
+              <li>Exploratory statistical analysis with NumPy and Pandas.</li>
+              <li>Visualizing statistical distributions and standard deviations with Matplotlib.</li>
+              <li>Implementing foundational supervised classification principles.</li>
+            </ul>
+
+            <div class="project-tech-stack">
+              <span class="stack-pill">Python</span>
+              <span class="stack-pill">NumPy</span>
+              <span class="stack-pill">Pandas</span>
+              <span class="stack-pill">Data Science</span>
+            </div>
+
+            <div class="project-action-row">
+              <span style="font-size: 0.8rem; color: #818cf8; font-family: var(--font-mono);">Phase: Conceptual Study &amp; Math</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION SECTION -->
+    <section id="education" class="education-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Academic Background</span>
+          <h2 class="section-title">Education &amp; <span class="gradient-text">Academic Timeline</span></h2>
+          <p class="section-desc">My academic journey, coursework, and future milestones as an undergraduate engineer at JECRC University.</p>
+        </div>
+
+        <div class="education-wrapper">
+          <div class="timeline">
+            
+            <!-- B.Tech Degree Item (Current) -->
+            <div class="timeline-item">
+              <div class="timeline-marker"></div>
+              <div class="edu-card">
+                <div class="edu-header">
+                  <div>
+                    <h3 class="edu-title">Bachelor of Technology (B.Tech)</h3>
+                    <div class="edu-institution">
+                      <span>JECRC University, Jaipur</span>
+                      <span>•</span>
+                      <span style="color: var(--cyan-bright);">CSE (AI &amp; Data Science)</span>
+                    </div>
+                  </div>
+                  <span class="edu-duration">2026 – 2030 (Expected)</span>
+                </div>
+
+                <p class="edu-details">
+                  Enrolled in the 4-year undergraduate engineering degree with a specialized curriculum integrating core computer science and software development with modern Artificial Intelligence and Data Science architectures.
+                </p>
+
+                <div class="edu-curriculum-chips">
+                  <span class="edu-chip">Current: 1st Year (C Programming, Discrete Mathematics, Digital Principles)</span>
+                  <span class="edu-chip">Focus: Algorithms, Systems, AI Foundations</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Higher Secondary Education Item -->
+            <div class="timeline-item">
+              <div class="timeline-marker upcoming"></div>
+              <div class="edu-card">
+                <div class="edu-header">
+                  <div>
+                    <h3 class="edu-title">Senior Secondary Schooling (12th Standard)</h3>
+                    <div class="edu-institution">Science Stream (Physics, Chemistry, Mathematics)</div>
+                  </div>
+                  <span class="edu-duration" style="background: rgba(99, 102, 241, 0.1); color: var(--indigo-light); border-color: rgba(99, 102, 241, 0.25);">Completed</span>
+                </div>
+
+                <p class="edu-details">
+                  Built a disciplined foundation in advanced mathematics (calculus, algebra, probability) and scientific methodology, which provides the mathematical backbone required for Artificial Intelligence and Data Science.
+                </p>
+
+                <div class="edu-curriculum-chips">
+                  <span class="edu-chip">Mathematics</span>
+                  <span class="edu-chip">Physics</span>
+                  <span class="edu-chip">Analytical Problem Solving</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACHIEVEMENTS & MILESTONES SECTION -->
+    <section id="milestones" class="milestones-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Milestones</span>
+          <h2 class="section-title">Genuine Achievements &amp; <span class="gradient-text">Certifications</span></h2>
+          <p class="section-desc">Authentic student milestones marking steady commitment, academic progress, and continuous skill building.</p>
+        </div>
+
+        <div class="milestones-grid">
+          
+          <div class="milestone-card">
+            <div class="milestone-icon">🎓</div>
+            <div class="milestone-body">
+              <h4>JECRC University Admission</h4>
+              <p>Successfully admitted into the competitive B.Tech Computer Science &amp; Engineering (AI &amp; DS) program in Jaipur.</p>
+              <span class="milestone-badge">Academic Milestone</span>
+            </div>
+          </div>
+
+          <div class="milestone-card">
+            <div class="milestone-icon">⚡</div>
+            <div class="milestone-body">
+              <h4>C Programming Core Mastery</h4>
+              <p>Successfully designed, implemented, and tested foundational C programs including integer analysis, loops, and conditional structures.</p>
+              <span class="milestone-badge">Practical Lab Skill</span>
+            </div>
+          </div>
+
+          <div class="milestone-card">
+            <div class="milestone-icon">🚀</div>
+            <div class="milestone-body">
+              <h4>Git &amp; Version Control Adoption</h4>
+              <p>Established a clean version-controlled developer workflow using Git and GitHub for tracking code changes and project milestones.</p>
+              <span class="milestone-badge">Developer Workflow</span>
+            </div>
+          </div>
+
+          <div class="milestone-card">
+            <div class="milestone-icon">📜</div>
+            <div class="milestone-body">
+              <h4>Python &amp; AI Fundamentals (In Progress)</h4>
+              <p>Actively enrolled in self-paced foundational certifications exploring basic Python programming syntax and machine learning concepts.</p>
+              <span class="milestone-badge">In Progress Certification</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="contact-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Let's Connect</span>
+          <h2 class="section-title">Get in Touch with <span class="gradient-text">Girraj</span></h2>
+          <p class="section-desc">Whether you have questions about my coursework, want to discuss C programming, or wish to share opportunities, feel free to reach out!</p>
+        </div>
+
+        <div class="contact-container">
+          
+          <!-- Contact Left: Channels & Info -->
+          <div class="contact-info-panel">
+            <div class="contact-pitch">
+              <h3>Always open to learning &amp; collaboration</h3>
+              <p>I am eager to connect with fellow students, faculty, software developers, and mentors in the AI &amp; Data Science space.</p>
+            </div>
+
+            <div class="contact-methods">
+              
+              <!-- Email Item -->
+              <div class="contact-item">
+                <div class="contact-item-left">
+                  <div class="contact-icon-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  </div>
+                  <div>
+                    <div class="contact-label">Direct Email</div>
+                    <div class="contact-val" id="email-address-text">girraj.sharma@example.com</div>
+                  </div>
+                </div>
+                <button class="btn-copy" id="btn-copy-email" title="Copy email address" aria-label="Copy Email">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+              </div>
+
+              <!-- LinkedIn Item -->
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="contact-item">
+                <div class="contact-item-left">
+                  <div class="contact-icon-box" style="background: rgba(14, 118, 168, 0.15); color: #0284c7;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                  </div>
+                  <div>
+                    <div class="contact-label">Professional Profile</div>
+                    <div class="contact-val">LinkedIn / Girraj Sharma</div>
+                  </div>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+
+              <!-- GitHub Item -->
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="contact-item">
+                <div class="contact-item-left">
+                  <div class="contact-icon-box" style="background: rgba(255, 255, 255, 0.08); color: #f1f5f9;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                  </div>
+                  <div>
+                    <div class="contact-label">Code Repositories</div>
+                    <div class="contact-val">GitHub / Girraj Sharma</div>
+                  </div>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+
+            </div>
+          </div>
+
+          <!-- Contact Right: Interactive Message Form -->
+          <div class="contact-form-panel">
+            <form id="contact-form" class="contact-form">
+              <div class="form-group">
+                <label for="contact-name" class="form-label">Your Name</label>
+                <input type="text" id="contact-name" class="form-input" placeholder="e.g. Alex Smith" required>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-email" class="form-label">Your Email</label>
+                <input type="email" id="contact-email" class="form-input" placeholder="e.g. alex@example.com" required>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-message" class="form-label">Your Message</label>
+                <textarea id="contact-message" class="form-textarea" placeholder="Hi Girraj, I came across your portfolio and wanted to reach out regarding..." required></textarea>
+              </div>
+
+              <button type="submit" class="btn-primary" style="justify-content: center; width: 100%;">
+                <span>Send Message</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <div class="footer-title">Girraj Sharma</div>
+            <div class="footer-sub">1st-Year B.Tech CSE (AI &amp; DS) • JECRC University, Jaipur (2026–2030)</div>
+          </div>
+
+          <div class="footer-nav">
+            <a href="#about">About</a>
+            <a href="#skills">Skills</a>
+            <a href="#c-lab">C Lab</a>
+            <a href="#projects">Projects</a>
+            <a href="#education">Education</a>
+            <a href="#contact">Contact</a>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <div>&copy; 2026 Girraj Sharma. Crafted as an authentic student developer portfolio.</div>
+          <div>Stack: <span class="tech-badge">Semantic HTML5 • Modern Vanilla CSS • JavaScript</span></div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Toast Notification element -->
+  <div id="toast" class="toast">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+    <span id="toast-message">Copied to clipboard!</span>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="./script.js"></script>
+</body>
+</html>
