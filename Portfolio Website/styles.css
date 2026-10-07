@@ -48,17 +48,27 @@
 
 body {
     background-color: var(--bg-color);
-    background-image: 
-        radial-gradient(at 15% 15%, rgba(0, 229, 255, 0.08) 0px, transparent 55%),
-        radial-gradient(at 85% 85%, rgba(255, 94, 58, 0.06) 0px, transparent 50%),
-        radial-gradient(at 50% 30%, rgba(30, 42, 66, 0.4) 0px, transparent 70%);
-    background-attachment: fixed;
     color: var(--text-primary);
     font-family: var(--font-body);
     overflow-x: hidden;
     line-height: 1.6;
     cursor: none; /* Custom cursor override */
     transition: background-color 0.5s ease;
+}
+
+/* GPU-composited fixed background prevents expensive full-viewport repaints on scroll */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+        radial-gradient(at 15% 15%, rgba(0, 229, 255, 0.08) 0px, transparent 55%),
+        radial-gradient(at 85% 85%, rgba(255, 94, 58, 0.06) 0px, transparent 50%),
+        radial-gradient(at 50% 30%, rgba(30, 42, 66, 0.4) 0px, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 /* Scrollbar hiding for cleaner look */
@@ -106,7 +116,8 @@ body.cursor-ready .cursor-outline {
                 border-color 0.3s ease;
 }
 
-body.cursor-hover .cursor-outline {
+body.cursor-hover .cursor-outline,
+.cursor-outline.cursor-hover {
     width: 70px;
     height: 70px;
     background-color: var(--accent-glow);
@@ -211,10 +222,11 @@ body.loaded .preloader {
 
 .panel-glass {
     background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border);
     border-radius: 8px;
+    transform: translateZ(0);
 }
 
 h1, h2, h3, h4 {
@@ -267,6 +279,7 @@ h1, h2, h3, h4 {
     z-index: 0;
     pointer-events: none;
     opacity: 0.35;
+    transform: translateZ(0);
 }
 
 .hero-content.hero-split {
@@ -405,9 +418,20 @@ h1, h2, h3, h4 {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 24px var(--accent-glow)) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.85));
-    animation: cyberTitleAura 3.5s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 20px var(--accent-glow)) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.85));
     padding-bottom: 4px;
+}
+
+.title-word-accent::before {
+    content: '';
+    position: absolute;
+    inset: -15% -20%;
+    background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%);
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: -1;
+    animation: cyberTitleAura 3.5s ease-in-out infinite alternate;
+    will-change: opacity, transform;
 }
 
 /* Fallback for high contrast / unsupported background-clip */
@@ -452,10 +476,12 @@ h1, h2, h3, h4 {
 
 @keyframes cyberTitleAura {
     0% {
-        filter: drop-shadow(0 0 20px var(--accent-glow)) drop-shadow(0 4px 14px rgba(0, 0, 0, 0.8));
+        opacity: 0.4;
+        transform: scale(0.96);
     }
     100% {
-        filter: drop-shadow(0 0 38px var(--accent-glow)) drop-shadow(0 0 70px rgba(0, 229, 255, 0.3)) drop-shadow(0 4px 18px rgba(0, 0, 0, 0.9));
+        opacity: 0.85;
+        transform: scale(1.05);
     }
 }
 
@@ -1612,6 +1638,18 @@ h1, h2, h3, h4 {
     transition: opacity 0.4s ease;
 }
 
+.project-img-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+}
+
+.project-visual:hover .project-img-thumb {
+    transform: scale(1.05);
+}
+
 .project-visual:hover .visual-overlay {
     opacity: 1;
 }
@@ -1979,6 +2017,8 @@ h1, h2, h3, h4 {
     gap: 4vw;
     padding: 0 6vw;
     width: max-content;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 .journey-card {
@@ -3241,6 +3281,20 @@ footer {
     }
     .modal-gallery {
         height: 35vh;
+    }
+    
+    .panel-glass {
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }
 

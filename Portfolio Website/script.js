@@ -15,7 +15,7 @@ if (typeof Lenis !== 'undefined') {
         gestureOrientation: 'vertical',
         smoothWheel: true,
         smoothTouch: false,
-        touchMultiplier: 2,
+        touchMultiplier: 1.5,
     });
 
     // Sync Lenis scroll with GSAP ScrollTrigger
@@ -23,12 +23,19 @@ if (typeof Lenis !== 'undefined') {
         lenis.on('scroll', ScrollTrigger.update);
     }
 
-    // Drive Lenis with requestAnimationFrame (most reliable method)
-    function raf(time) {
-        if (lenis) lenis.raf(time);
+    // Drive Lenis synchronously through GSAP's optimized ticker to eliminate dual-RAF fighting
+    if (typeof gsap !== 'undefined') {
+        gsap.ticker.add((time) => {
+            if (lenis) lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
+    } else {
+        function raf(time) {
+            if (lenis) lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
         requestAnimationFrame(raf);
     }
-    requestAnimationFrame(raf);
 }
 
 // Smooth anchor scrolling handler for internal links (Header, Hero CTA, etc.)
@@ -53,8 +60,11 @@ const root = document.documentElement;
 const cursorDot = document.querySelector('.cursor-dot');
 const cursorOutline = document.querySelector('.cursor-outline');
 
+// Global Cached Accent Color (avoids getComputedStyle recalculations inside RAF loops)
+let currentAccentColor = '#00E5FF';
+
 // ==========================================================================
-// 2. CUSTOM CURSOR & MAGNETIC EFFECTS (Issues #1-4 fixed)
+// 2. CUSTOM CURSOR & MAGNETIC EFFECTS (Optimized for 60 FPS)
 // ==========================================================================
 let mouseX = 0;
 let mouseY = 0;
@@ -67,7 +77,7 @@ window.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
     
-    // Show cursor on first mouse move (Issue #1 & #2)
+    // Show cursor on first mouse move
     if (!cursorReady) {
         cursorReady = true;
         outlineX = mouseX;
@@ -75,18 +85,18 @@ window.addEventListener('mousemove', (e) => {
         document.body.classList.add('cursor-ready');
     }
     
-    // Use transform3d for GPU-accelerated positioning (Issue #4)
+    // Use transform3d for GPU-accelerated positioning
     if (cursorDot) cursorDot.style.transform = `translate3d(${mouseX - 3}px, ${mouseY - 3}px, 0)`;
-});
+}, { passive: true });
 
-// Handle cursor leaving the window (Issue #3)
+// Handle cursor leaving the window
 document.addEventListener('mouseleave', () => {
     cursorVisible = false;
     if (cursorReady) {
         if (cursorDot) cursorDot.style.opacity = '0';
         if (cursorOutline) cursorOutline.style.opacity = '0';
     }
-    // Clear any stuck hover states
+    if (cursorOutline) cursorOutline.classList.remove('cursor-hover');
     document.body.classList.remove('cursor-hover');
 });
 
@@ -103,46 +113,57 @@ function animateCursor() {
         let distX = mouseX - outlineX;
         let distY = mouseY - outlineY;
         
-        outlineX += distX * 0.15;
-        outlineY += distY * 0.15;
-        
-        // Use transform3d for GPU-accelerated positioning (Issue #4)
-        if (cursorOutline) cursorOutline.style.transform = `translate3d(${outlineX - 20}px, ${outlineY - 20}px, 0)`;
+        // Only update DOM transform if movement is perceptible
+        if (Math.abs(distX) > 0.1 || Math.abs(distY) > 0.1) {
+            outlineX += distX * 0.18;
+            outlineY += distY * 0.18;
+            if (cursorOutline) cursorOutline.style.transform = `translate3d(${(outlineX - 20).toFixed(1)}px, ${(outlineY - 20).toFixed(1)}px, 0)`;
+        }
     }
     
     requestAnimationFrame(animateCursor);
 }
 animateCursor();
 
-// Re-bind hover states dynamically
+// Re-bind hover states dynamically - isolates class changes to the cursor without restyling full body
 function bindCursorHover() {
     const hoverTargets = document.querySelectorAll('.hover-target, a, button, input, textarea, .magnetic');
     
     hoverTargets.forEach(target => {
-        // Remove existing to prevent duplicates if called multiple times
         target.removeEventListener('mouseenter', addHoverState);
         target.removeEventListener('mouseleave', removeHoverState);
         
-        target.addEventListener('mouseenter', addHoverState);
-        target.addEventListener('mouseleave', removeHoverState);
+        target.addEventListener('mouseenter', addHoverState, { passive: true });
+        target.addEventListener('mouseleave', removeHoverState, { passive: true });
     });
 }
 
-function addHoverState() { document.body.classList.add('cursor-hover'); }
-function removeHoverState() { document.body.classList.remove('cursor-hover'); }
+function addHoverState() {
+    if (cursorOutline) cursorOutline.classList.add('cursor-hover');
+}
+function removeHoverState() {
+    if (cursorOutline) cursorOutline.classList.remove('cursor-hover');
+}
 
-// Magnetic Effect
+// Magnetic Effect with cached bounding rects to prevent layout thrashing on mousemove
 document.querySelectorAll('.magnetic').forEach(magnetic => {
+    let bound = null;
+
+    magnetic.addEventListener('mouseenter', () => {
+        bound = magnetic.getBoundingClientRect();
+    }, { passive: true });
+
     magnetic.addEventListener('mousemove', (e) => {
-        const bound = magnetic.getBoundingClientRect();
+        if (!bound) bound = magnetic.getBoundingClientRect();
         const x = e.clientX - bound.left - bound.width / 2;
         const y = e.clientY - bound.top - bound.height / 2;
         
-        gsap.to(magnetic, { x: x * 0.2, y: y * 0.2, duration: 0.5, ease: "power2.out" });
-    });
+        gsap.to(magnetic, { x: x * 0.2, y: y * 0.2, duration: 0.5, ease: "power2.out", overwrite: "auto" });
+    }, { passive: true });
     
     magnetic.addEventListener('mouseleave', () => {
-        gsap.to(magnetic, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)" });
+        bound = null;
+        gsap.to(magnetic, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)", overwrite: "auto" });
     });
 });
 
@@ -150,6 +171,7 @@ document.querySelectorAll('.magnetic').forEach(magnetic => {
 // 3. THEME SWITCHER (ENERGY CORE)
 // ==========================================================================
 function applyTheme(color) {
+    currentAccentColor = color;
     const themeBtns = document.querySelectorAll('.theme-btn');
     themeBtns.forEach(b => {
         if (b.getAttribute('data-color').toLowerCase() === color.toLowerCase()) {
@@ -177,7 +199,7 @@ function applyTheme(color) {
     // Flash background effect
     gsap.fromTo("body", 
         { backgroundColor: `rgba(${r}, ${g}, ${b}, 0.08)` },
-        { backgroundColor: "var(--bg-color)", duration: 0.8 }
+        { backgroundColor: "var(--bg-color)", duration: 0.8, overwrite: "auto" }
     );
 }
 
@@ -198,17 +220,17 @@ document.querySelectorAll('.hud-social-btn, .hud-contact-cta, .nav-dock-item, .f
     });
 });
 
-// Main Header HUD Capsule Scroll & Interaction Controller
+// Main Header HUD Capsule Scroll & Interaction Controller (State-gated to avoid continuous classList writes)
 function initHeaderHUD() {
     const header = document.getElementById('main-header');
-    const hudBox = document.querySelector('.hud-box-container');
-    if (!header || !hudBox) return;
+    if (!header) return;
 
+    let isScrolled = false;
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 35) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
+        const shouldScroll = window.scrollY > 35;
+        if (shouldScroll !== isScrolled) {
+            isScrolled = shouldScroll;
+            header.classList.toggle('scrolled', isScrolled);
         }
     }, { passive: true });
 }
@@ -354,85 +376,108 @@ function initTerminalWelcome() {
 }
 
 // ==========================================================================
-// 6. HERO CANVAS ANIMATION (Issue #5, #6, #14 fixed)
+// 6. HERO CANVAS ANIMATION (Optimized for 60 FPS)
 // ==========================================================================
 const hCanvas = document.getElementById('hero-canvas');
-const hCtx = hCanvas.getContext('2d');
-let hWidth, hHeight, hNodes = [];
-let heroInView = true; // Track if hero is in viewport (Issue #5)
+const hCtx = hCanvas ? hCanvas.getContext('2d') : null;
+let hWidth = 0, hHeight = 0, hNodes = [];
+let heroInView = true;
+let heroRafId = null;
+let hCanvasRect = null;
+
+function updateHeroRect() {
+    if (hCanvas) {
+        hCanvasRect = hCanvas.getBoundingClientRect();
+    }
+}
+window.addEventListener('resize', updateHeroRect, { passive: true });
+window.addEventListener('scroll', updateHeroRect, { passive: true });
 
 function initHeroCanvas() {
-    const dpr = window.devicePixelRatio || 1; // Issue #14: HiDPI fix
+    if (!hCanvas || !hCtx) return;
+    const maxDpr = window.innerWidth < 768 ? 1.25 : 1.5;
+    const dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
     hWidth = window.innerWidth;
     hHeight = window.innerHeight;
-    hCanvas.width = hWidth * dpr;
-    hCanvas.height = hHeight * dpr;
+    hCanvas.width = Math.round(hWidth * dpr);
+    hCanvas.height = Math.round(hHeight * dpr);
     hCanvas.style.width = hWidth + 'px';
     hCanvas.style.height = hHeight + 'px';
-    hCtx.scale(dpr, dpr);
+    hCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     
     hNodes = [];
-    
-    const count = window.innerWidth < 768 ? 60 : 150;
+    const count = window.innerWidth < 768 ? 40 : 100;
     
     for (let i = 0; i < count; i++) {
+        const vx = (Math.random() - 0.5) * 1.5;
+        const vy = (Math.random() - 0.5) * 1.5;
         hNodes.push({
             x: Math.random() * hWidth,
             y: Math.random() * hHeight,
             r: Math.random() * 2 + 0.5,
-            vx: (Math.random() - 0.5) * 1.5,
-            vy: (Math.random() - 0.5) * 1.5,
-            originalVx: 0,
-            originalVy: 0
+            vx: vx,
+            vy: vy,
+            originalVx: vx,
+            originalVy: vy
         });
-        hNodes[i].originalVx = hNodes[i].vx;
-        hNodes[i].originalVy = hNodes[i].vy;
     }
+    updateHeroRect();
 }
 
-// Track hero visibility with IntersectionObserver (Issue #5)
+// Track hero visibility with IntersectionObserver to sleep RAF loop when off-screen
 const heroObserver = new IntersectionObserver((entries) => {
     heroInView = entries[0].isIntersecting;
-}, { threshold: 0.1 });
+    if (heroInView && !heroRafId) {
+        updateHeroRect();
+        heroRafId = requestAnimationFrame(renderHeroCanvas);
+    }
+}, { threshold: 0.05 });
 
 function renderHeroCanvas() {
+    if (!heroInView || !hCtx) {
+        heroRafId = null;
+        return;
+    }
+
     hCtx.clearRect(0, 0, hWidth, hHeight);
     
-    const accentColor = getComputedStyle(root).getPropertyValue('--accent').trim();
+    const accentColor = currentAccentColor;
     hCtx.fillStyle = accentColor;
     
-    // Get hero-local mouse coords (Issue #5)
-    const heroRect = hCanvas.getBoundingClientRect();
-    const localMouseX = mouseX - heroRect.left;
-    const localMouseY = mouseY - heroRect.top;
+    // Cached hero-local mouse coords (no forced reflow)
+    if (!hCanvasRect) updateHeroRect();
+    const localMouseX = mouseX - (hCanvasRect ? hCanvasRect.left : 0);
+    const localMouseY = mouseY - (hCanvasRect ? hCanvasRect.top : 0);
     const mouseInHero = heroInView && 
         localMouseX >= 0 && localMouseX <= hWidth && 
         localMouseY >= 0 && localMouseY <= hHeight;
     
-    hNodes.forEach(node => {
+    // 1. Update and draw nodes
+    hCtx.beginPath();
+    for (let i = 0; i < hNodes.length; i++) {
+        const node = hNodes[i];
         if (mouseInHero) {
-            // Interactive problem solver gravity
             const mdx = localMouseX - node.x;
             const mdy = localMouseY - node.y;
-            const mdist = Math.sqrt(mdx*mdx + mdy*mdy);
+            const mdistSq = mdx * mdx + mdy * mdy;
             
-            if(mdist < 250) {
+            if (mdistSq < 62500) { // 250^2
+                const mdist = Math.sqrt(mdistSq);
                 const force = (250 - mdist) / 250;
                 node.vx += (mdx / mdist) * force * 0.5;
                 node.vy += (mdy / mdist) * force * 0.5;
                 
-                // Limit speed to prevent chaotic explosion
-                const speed = Math.sqrt(node.vx*node.vx + node.vy*node.vy);
-                if(speed > 5) {
-                    node.vx = (node.vx/speed) * 5;
-                    node.vy = (node.vy/speed) * 5;
+                const speedSq = node.vx * node.vx + node.vy * node.vy;
+                if (speedSq > 25) { // 5^2
+                    const speed = Math.sqrt(speedSq);
+                    node.vx = (node.vx / speed) * 5;
+                    node.vy = (node.vy / speed) * 5;
                 }
             } else {
                 node.vx += (node.originalVx - node.vx) * 0.05;
                 node.vy += (node.originalVy - node.vy) * 0.05;
             }
         } else {
-            // Return to original speed when mouse not in hero
             node.vx += (node.originalVx - node.vx) * 0.05;
             node.vy += (node.originalVy - node.vy) * 0.05;
         }
@@ -443,57 +488,66 @@ function renderHeroCanvas() {
         if (node.x < 0 || node.x > hWidth) { node.vx *= -1; node.x = Math.max(0, Math.min(node.x, hWidth)); }
         if (node.y < 0 || node.y > hHeight) { node.vy *= -1; node.y = Math.max(0, Math.min(node.y, hHeight)); }
         
-        hCtx.beginPath();
+        hCtx.moveTo(node.x + node.r, node.y);
         hCtx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
-        hCtx.fill();
-    });
+    }
+    hCtx.fill();
     
-    // Draw connections between nodes (Issue #6: proper alpha/lineWidth reset)
-    for(let i=0; i<hNodes.length; i++) {
-        for(let j=i+1; j<hNodes.length; j++) {
-            const dx = hNodes[i].x - hNodes[j].x;
-            const dy = hNodes[i].y - hNodes[j].y;
-            const dist = Math.sqrt(dx*dx + dy*dy);
+    // 2. Draw connections between nodes with squared distance check
+    hCtx.lineWidth = 0.8;
+    for (let i = 0; i < hNodes.length; i++) {
+        const nodeA = hNodes[i];
+        for (let j = i + 1; j < hNodes.length; j++) {
+            const nodeB = hNodes[j];
+            const dx = nodeA.x - nodeB.x;
+            const dy = nodeA.y - nodeB.y;
+            const distSq = dx * dx + dy * dy;
             
-            if(dist < 120) {
+            if (distSq < 14400) { // 120^2
+                const dist = Math.sqrt(distSq);
                 hCtx.strokeStyle = accentColor;
-                hCtx.globalAlpha = 1 - (dist/120);
-                hCtx.lineWidth = 0.8;
+                hCtx.globalAlpha = 1 - (dist / 120);
                 hCtx.beginPath();
-                hCtx.moveTo(hNodes[i].x, hNodes[i].y);
-                hCtx.lineTo(hNodes[j].x, hNodes[j].y);
+                hCtx.moveTo(nodeA.x, nodeA.y);
+                hCtx.lineTo(nodeB.x, nodeB.y);
                 hCtx.stroke();
             }
         }
         
-        // Connect to mouse to show "solving" connections (only when mouse is in hero)
+        // Connect to mouse when mouse is in hero
         if (mouseInHero) {
-            const mdx = hNodes[i].x - localMouseX;
-            const mdy = hNodes[i].y - localMouseY;
-            const mdist = Math.sqrt(mdx*mdx + mdy*mdy);
+            const mdx = nodeA.x - localMouseX;
+            const mdy = nodeA.y - localMouseY;
+            const mdistSq = mdx * mdx + mdy * mdy;
             
-            if(mdist < 200) {
+            if (mdistSq < 40000) { // 200^2
+                const mdist = Math.sqrt(mdistSq);
                 hCtx.strokeStyle = '#ffffff';
-                hCtx.globalAlpha = Math.pow(1 - (mdist/200), 2);
+                hCtx.globalAlpha = Math.pow(1 - (mdist / 200), 2);
                 hCtx.lineWidth = 1.5;
                 hCtx.beginPath();
-                hCtx.moveTo(hNodes[i].x, hNodes[i].y);
+                hCtx.moveTo(nodeA.x, nodeA.y);
                 hCtx.lineTo(localMouseX, localMouseY);
                 hCtx.stroke();
+                hCtx.lineWidth = 0.8;
             }
         }
     }
     
-    // Reset alpha and lineWidth cleanly (Issue #6)
     hCtx.globalAlpha = 1;
     hCtx.lineWidth = 1;
     
-    requestAnimationFrame(renderHeroCanvas);
+    heroRafId = requestAnimationFrame(renderHeroCanvas);
 }
 
-window.addEventListener('resize', initHeroCanvas);
+let heroResizeTimeout = null;
+window.addEventListener('resize', () => {
+    clearTimeout(heroResizeTimeout);
+    heroResizeTimeout = setTimeout(initHeroCanvas, 150);
+}, { passive: true });
+
 initHeroCanvas();
-renderHeroCanvas();
+heroRafId = requestAnimationFrame(renderHeroCanvas);
 
 // Start observing hero for visibility
 const heroSection = document.getElementById('hero');
@@ -502,11 +556,15 @@ if (heroSection) {
 }
 
 // ==========================================================================
-// 7. COMPLEX SKILLS CANVAS (Issue #13: HiDPI fix)
+// 7. COMPLEX SKILLS CANVAS (Optimized for 60 FPS)
 // ==========================================================================
 const sCanvas = document.getElementById('skills-canvas');
-const sCtx = sCanvas.getContext('2d');
-let sWidth, sHeight;
+const sCtx = sCanvas ? sCanvas.getContext('2d') : null;
+let sWidth = 0, sHeight = 0;
+let skillsInView = false;
+let skillsRafId = null;
+let sCanvasRect = null;
+
 const skillsList = [
     "Modern C++ (17/20)", "STL & Templates", "Data Structures", "Graph Theory",
     "Dynamic Programming", "Segment Trees", "PyTorch", "Deep Learning",
@@ -516,17 +574,26 @@ const skillsList = [
 ];
 let orbits = [];
 
+function updateSkillsRect() {
+    if (sCanvas) {
+        sCanvasRect = sCanvas.getBoundingClientRect();
+    }
+}
+window.addEventListener('resize', updateSkillsRect, { passive: true });
+window.addEventListener('scroll', updateSkillsRect, { passive: true });
+
 function initSkillsCanvas() {
     const wrapper = document.querySelector('.skills-canvas-wrapper');
-    if (!wrapper || !sCanvas) return;
-    const dpr = window.devicePixelRatio || 1; // Issue #13: HiDPI fix
+    if (!wrapper || !sCanvas || !sCtx) return;
+    const maxDpr = window.innerWidth < 768 ? 1.25 : 1.5;
+    const dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
     sWidth = wrapper.clientWidth;
     sHeight = wrapper.clientHeight;
-    sCanvas.width = sWidth * dpr;
-    sCanvas.height = sHeight * dpr;
+    sCanvas.width = Math.round(sWidth * dpr);
+    sCanvas.height = Math.round(sHeight * dpr);
     sCanvas.style.width = sWidth + 'px';
     sCanvas.style.height = sHeight + 'px';
-    sCtx.scale(dpr, dpr);
+    sCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     
     orbits = skillsList.map((skill, index) => {
         return {
@@ -537,50 +604,70 @@ function initSkillsCanvas() {
             size: Math.random() * 6 + 12
         };
     });
+    updateSkillsRect();
+}
+
+// Track skills canvas visibility with IntersectionObserver to pause loop when scrolled away
+const skillsObserver = new IntersectionObserver((entries) => {
+    skillsInView = entries[0].isIntersecting;
+    if (skillsInView && !skillsRafId) {
+        updateSkillsRect();
+        skillsRafId = requestAnimationFrame(renderSkillsCanvas);
+    }
+}, { threshold: 0.05 });
+
+const skillsWrapper = document.querySelector('.skills-canvas-wrapper');
+if (skillsWrapper) {
+    skillsObserver.observe(skillsWrapper);
 }
 
 function renderSkillsCanvas() {
-    if (!sCanvas || !sCtx || !sWidth || !sHeight) {
-        requestAnimationFrame(renderSkillsCanvas);
+    if (!skillsInView || !sCanvas || !sCtx || !sWidth || !sHeight) {
+        skillsRafId = null;
         return;
     }
     sCtx.clearRect(0, 0, sWidth, sHeight);
     
     const centerX = sWidth / 2;
     const centerY = sHeight / 2;
-    const accentColor = getComputedStyle(root).getPropertyValue('--accent').trim();
+    const accentColor = currentAccentColor;
 
-    // Draw Core
+    // Draw Core with GPU radial gradient (replaces expensive CPU shadowBlur: 30)
+    const coreGrad = sCtx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 38);
+    coreGrad.addColorStop(0, '#ffffff');
+    coreGrad.addColorStop(0.3, accentColor);
+    coreGrad.addColorStop(1, 'transparent');
     sCtx.beginPath();
-    sCtx.arc(centerX, centerY, 30, 0, Math.PI * 2);
-    sCtx.fillStyle = accentColor;
-    sCtx.shadowBlur = 30;
-    sCtx.shadowColor = accentColor;
+    sCtx.arc(centerX, centerY, 38, 0, Math.PI * 2);
+    sCtx.fillStyle = coreGrad;
     sCtx.fill();
-    sCtx.shadowBlur = 0; // reset
 
     sCtx.font = "14px 'JetBrains Mono'";
     sCtx.textAlign = "center";
     sCtx.textBaseline = "middle";
 
-    orbits.forEach(node => {
+    // Cached canvas rect (calculated once per frame, NOT 20 times inside loop)
+    if (!sCanvasRect) updateSkillsRect();
+    const localMouseX = mouseX - (sCanvasRect ? sCanvasRect.left : 0);
+    const localMouseY = mouseY - (sCanvasRect ? sCanvasRect.top : 0);
+
+    for (let i = 0; i < orbits.length; i++) {
+        const node = orbits[i];
         node.angle += node.speed;
-        
-        // Interactive Mouse repulsion on canvas
-        const canvasRect = sCanvas.getBoundingClientRect();
-        const localMouseX = mouseX - canvasRect.left;
-        const localMouseY = mouseY - canvasRect.top;
         
         let targetX = centerX + Math.cos(node.angle) * node.radius;
         let targetY = centerY + Math.sin(node.angle) * node.radius;
         
         const dx = targetX - localMouseX;
         const dy = targetY - localMouseY;
-        const dist = Math.sqrt(dx*dx + dy*dy);
+        const distSq = dx * dx + dy * dy;
         
-        if (dist < 100) {
-            targetX += (dx / dist) * (100 - dist) * 0.5;
-            targetY += (dy / dist) * (100 - dist) * 0.5;
+        if (distSq < 10000) { // 100^2
+            const dist = Math.sqrt(distSq);
+            if (dist > 0) {
+                targetX += (dx / dist) * (100 - dist) * 0.5;
+                targetY += (dy / dist) * (100 - dist) * 0.5;
+            }
         }
 
         // Draw Line to core
@@ -599,14 +686,18 @@ function renderSkillsCanvas() {
         // Draw Text
         sCtx.fillStyle = "rgba(255,255,255,0.7)";
         sCtx.fillText(node.text, targetX, targetY - 15);
-    });
+    }
     
-    requestAnimationFrame(renderSkillsCanvas);
+    skillsRafId = requestAnimationFrame(renderSkillsCanvas);
 }
 
-window.addEventListener('resize', initSkillsCanvas);
+let skillsResizeTimeout = null;
+window.addEventListener('resize', () => {
+    clearTimeout(skillsResizeTimeout);
+    skillsResizeTimeout = setTimeout(initSkillsCanvas, 150);
+}, { passive: true });
+
 initSkillsCanvas();
-renderSkillsCanvas();
 
 // Interactive Skills Filter System
 function initSkillsFilter() {
@@ -962,41 +1053,50 @@ document.addEventListener('keydown', (e) => {
 // ==========================================================================
 // 10. GSAP SCROLL CHOREOGRAPHY (Including Horizontal Scroll & Reference Stats)
 // ==========================================================================
+// ==========================================================================
+// 10. GSAP SCROLL CHOREOGRAPHY (Optimized for 60 FPS)
+// ==========================================================================
 function initGSAPAnimations() {
+    if (window._gsapAnimationsInitialized) return;
+    window._gsapAnimationsInitialized = true;
+
     // 1. Hero Entrance Timeline
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
     
-    tl.fromTo('.hero-status-pill', { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, delay: 0.1 })
-      .fromTo('.hero-greeting', { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.6 }, "-=0.3")
-      .fromTo('.hero-name-wrapper', { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.6 }, "-=0.3")
-      .fromTo('.hero-title', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8 }, "-=0.3")
-      .fromTo('.hero-description', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7 }, "-=0.4")
-      .fromTo('.hero-cta', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7 }, "-=0.4")
-      .fromTo('.hero-image-side', { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 1, ease: "power2.out" }, "-=0.8")
-      .fromTo('.hero-ticker', { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
+    tl.fromTo('.hero-status-pill', { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, delay: 0.1, force3D: true })
+      .fromTo('.hero-greeting', { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.6, force3D: true }, "-=0.3")
+      .fromTo('.hero-name-wrapper', { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.6, force3D: true }, "-=0.3")
+      .fromTo('.hero-title', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, force3D: true }, "-=0.3")
+      .fromTo('.hero-description', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7, force3D: true }, "-=0.4")
+      .fromTo('.hero-cta', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7, force3D: true }, "-=0.4")
+      .fromTo('.hero-image-side', { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 1, ease: "power2.out", force3D: true }, "-=0.8")
+      .fromTo('.hero-ticker', { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.8, force3D: true }, "-=0.5")
       .fromTo('.scroll-indicator', { opacity: 0 }, { opacity: 1, duration: 0.8 }, "-=0.3");
 
-    // 2. Standard Section Fades
+    // 2. Standard Section Fades with GPU force3D
     const fadeUps = document.querySelectorAll('.fade-up:not(.hero *)');
     fadeUps.forEach(elem => {
         gsap.to(elem, {
             scrollTrigger: {
                 trigger: elem,
                 start: "top 85%",
-                toggleActions: "play none none reverse"
+                toggleActions: "play none none reverse",
+                fastScrollEnd: true
             },
             opacity: 1,
             y: 0,
             duration: 0.8,
-            ease: "power2.out"
+            ease: "power2.out",
+            force3D: true
         });
     });
 
-    // 3. Number Counter for About Reference Stats
+    // 3. Number Counter for About Reference Stats (avoid redundant DOM string updates)
     const refNumbers = document.querySelectorAll('.ref-stat-number, .stat-number');
     refNumbers.forEach(num => {
         const target = parseInt(num.getAttribute('data-target') || "0");
         if (target > 0) {
+            let lastVal = -1;
             gsap.to({ val: 0 }, {
                 val: target,
                 duration: 2.2,
@@ -1006,7 +1106,11 @@ function initGSAPAnimations() {
                     start: "top 85%"
                 },
                 onUpdate: function() {
-                    num.textContent = Math.floor(this.targets()[0].val);
+                    const currentVal = Math.round(this.targets()[0].val);
+                    if (currentVal !== lastVal) {
+                        lastVal = currentVal;
+                        num.textContent = currentVal;
+                    }
                 }
             });
         }
@@ -1026,7 +1130,8 @@ function initGSAPAnimations() {
         const tween = gsap.to(journeyTrack, {
             x: getScrollAmount,
             duration: 3,
-            ease: "none"
+            ease: "none",
+            force3D: true
         });
 
         ScrollTrigger.create({
@@ -1057,8 +1162,10 @@ function initGSAPAnimations() {
 }
 
 // ==========================================================================
-// 11. HERO 3D MOUSE PARALLAX & TILT
+// 11. HERO 3D MOUSE PARALLAX & TILT (Optimized with Visibility Sleep)
 // ==========================================================================
+let parallaxRafId = null;
+
 function initHeroParallax() {
     if (window._heroParallaxInitialized) return;
     window._heroParallaxInitialized = true;
@@ -1077,21 +1184,34 @@ function initHeroParallax() {
 
         targetRotY = dx * 14;
         targetRotX = -dy * 10;
-    });
+        
+        if (!parallaxRafId && heroInView) {
+            parallaxRafId = requestAnimationFrame(renderParallax);
+        }
+    }, { passive: true });
 
     function renderParallax() {
-        currentRotX += (targetRotX - currentRotX) * 0.08;
-        currentRotY += (targetRotY - currentRotY) * 0.08;
+        if (!heroInView) {
+            parallaxRafId = null;
+            return;
+        }
 
-        heroParallax.style.transform = `perspective(1000px) rotateX(${currentRotX.toFixed(2)}deg) rotateY(${currentRotY.toFixed(2)}deg)`;
-        
-        requestAnimationFrame(renderParallax);
+        const diffX = targetRotX - currentRotX;
+        const diffY = targetRotY - currentRotY;
+
+        if (Math.abs(diffX) > 0.01 || Math.abs(diffY) > 0.01) {
+            currentRotX += diffX * 0.08;
+            currentRotY += diffY * 0.08;
+            heroParallax.style.transform = `perspective(1000px) rotateX(${currentRotX.toFixed(2)}deg) rotateY(${currentRotY.toFixed(2)}deg)`;
+            parallaxRafId = requestAnimationFrame(renderParallax);
+        } else {
+            parallaxRafId = null;
+        }
     }
-    renderParallax();
 }
 
 // ==========================================================================
-// 12. 3D INTERACTIVE A.I. CORE (Three.js & WebGL Engine)
+// 12. 3D INTERACTIVE A.I. CORE (Three.js & WebGL Engine - 60 FPS Optimized)
 // ==========================================================================
 let aiCoreScene, aiCoreCamera, aiCoreRenderer, aiCoreMesh, aiCorePoints, aiCoreParticles, aiCoreInnerSphere;
 let isDraggingAi = false;
@@ -1100,6 +1220,18 @@ let aiRotSpeedX = 0.005, aiRotSpeedY = 0.008;
 let aiPulseScale = 1;
 let aiFpsLastTime = performance.now();
 let aiFpsFrameCount = 0;
+let aiInView = false;
+let aiRafId = null;
+let aiCanvasRect = null;
+
+function updateAiRect() {
+    const canvas = document.getElementById('ai-three-canvas');
+    if (canvas) {
+        aiCanvasRect = canvas.getBoundingClientRect();
+    }
+}
+window.addEventListener('resize', updateAiRect, { passive: true });
+window.addEventListener('scroll', updateAiRect, { passive: true });
 
 function init3DAiCore() {
     if (window._aiCoreInitialized) return;
@@ -1121,15 +1253,22 @@ function init3DAiCore() {
         aiCoreCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
         aiCoreCamera.position.z = 6.5;
 
+        // Sensible pixel ratio capping (1.5 max on desktop, 1.25 on mobile) to reduce GPU fill-rate by 44%+
+        const maxDpr = window.innerWidth < 768 ? 1.25 : 1.5;
+        const dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
+
         aiCoreRenderer = new THREE.WebGLRenderer({
             canvas: canvas,
             alpha: true,
-            antialias: true
+            antialias: true,
+            powerPreference: "high-performance",
+            stencil: false,
+            depth: true
         });
         aiCoreRenderer.setSize(width, height);
-        aiCoreRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        aiCoreRenderer.setPixelRatio(dpr);
 
-        const currentColor = getComputedStyle(root).getPropertyValue('--accent').trim() || '#00E5FF';
+        const currentColor = currentAccentColor || '#00E5FF';
 
         // 1. Outer Geodesic Wireframe
         const icoGeo = new THREE.IcosahedronGeometry(2.0, 2);
@@ -1140,9 +1279,10 @@ function init3DAiCore() {
             opacity: 0.65
         });
         aiCoreMesh = new THREE.Mesh(icoGeo, icoMat);
+        aiCoreMesh.frustumCulled = false;
         aiCoreScene.add(aiCoreMesh);
 
-        // 2. Glowing Nodes at Vertices
+        // 2. Glowing Nodes at Vertices (shares icoGeo geometry buffer)
         const pointsMat = new THREE.PointsMaterial({
             color: currentColor,
             size: 0.08,
@@ -1150,6 +1290,7 @@ function init3DAiCore() {
             opacity: 0.9
         });
         aiCorePoints = new THREE.Points(icoGeo, pointsMat);
+        aiCorePoints.frustumCulled = false;
         aiCoreScene.add(aiCorePoints);
 
         // 3. Inner Pulsing Core
@@ -1161,10 +1302,11 @@ function init3DAiCore() {
             opacity: 0.35
         });
         aiCoreInnerSphere = new THREE.Mesh(innerGeo, innerMat);
+        aiCoreInnerSphere.frustumCulled = false;
         aiCoreScene.add(aiCoreInnerSphere);
 
-        // 4. Orbiting Neural Particles Cloud
-        const particleCount = 200;
+        // 4. Orbiting Neural Particles Cloud (scaled count for smooth mobile performance)
+        const particleCount = window.innerWidth < 768 ? 100 : 180;
         const particleGeo = new THREE.BufferGeometry();
         const positions = new Float32Array(particleCount * 3);
         for (let i = 0; i < particleCount; i++) {
@@ -1183,6 +1325,7 @@ function init3DAiCore() {
             opacity: 0.7
         });
         aiCoreParticles = new THREE.Points(particleGeo, particleMat);
+        aiCoreParticles.frustumCulled = false;
         aiCoreScene.add(aiCoreParticles);
 
         // Dynamic Theme Hook
@@ -1197,10 +1340,11 @@ function init3DAiCore() {
             isDraggingAi = true;
             prevAiMouseX = e.clientX;
             prevAiMouseY = e.clientY;
-        });
+        }, { passive: true });
 
-        window.addEventListener('mouseup', () => { isDraggingAi = false; });
+        window.addEventListener('mouseup', () => { isDraggingAi = false; }, { passive: true });
 
+        // Mousemove uses cached rect (no layout thrashing on global window cursor events)
         window.addEventListener('mousemove', (e) => {
             if (isDraggingAi && aiCoreMesh) {
                 const deltaX = e.clientX - prevAiMouseX;
@@ -1212,16 +1356,18 @@ function init3DAiCore() {
                 aiCoreInnerSphere.rotation.y -= deltaX * 0.005;
                 prevAiMouseX = e.clientX;
                 prevAiMouseY = e.clientY;
-            } else if (!isDraggingAi && aiCoreMesh) {
-                const rect = canvas.getBoundingClientRect();
-                const localX = (e.clientX - rect.left) / rect.width - 0.5;
-                const localY = (e.clientY - rect.top) / rect.height - 0.5;
-                if (localX >= -0.7 && localX <= 0.7 && localY >= -0.7 && localY <= 0.7) {
-                    aiRotSpeedY = 0.006 + localX * 0.01;
-                    aiRotSpeedX = 0.004 + localY * 0.01;
+            } else if (aiInView && !isDraggingAi && aiCoreMesh) {
+                if (!aiCanvasRect) updateAiRect();
+                if (aiCanvasRect && aiCanvasRect.width > 0) {
+                    const localX = (e.clientX - aiCanvasRect.left) / aiCanvasRect.width - 0.5;
+                    const localY = (e.clientY - aiCanvasRect.top) / aiCanvasRect.height - 0.5;
+                    if (localX >= -0.7 && localX <= 0.7 && localY >= -0.7 && localY <= 0.7) {
+                        aiRotSpeedY = 0.006 + localX * 0.01;
+                        aiRotSpeedX = 0.004 + localY * 0.01;
+                    }
                 }
             }
-        });
+        }, { passive: true });
 
         // Touch support for mobile
         canvas.addEventListener('touchstart', (e) => {
@@ -1245,7 +1391,7 @@ function init3DAiCore() {
             }
         }, { passive: true });
 
-        canvas.addEventListener('touchend', () => { isDraggingAi = false; });
+        canvas.addEventListener('touchend', () => { isDraggingAi = false; }, { passive: true });
 
         // Click shockwave
         canvas.addEventListener('click', () => {
@@ -1261,11 +1407,20 @@ function init3DAiCore() {
                 aiCoreCamera.updateProjectionMatrix();
                 aiCoreRenderer.setSize(w, h);
             }
-        });
+            updateAiRect();
+        }, { passive: true });
 
-        // Animation Loop
+        // Cache FPS DOM element to avoid repeated getElementById inside animation loop
+        const fpsEl = document.getElementById('ai-hud-fps');
+
+        // Animation Loop with Visibility Culling
         function animate3DAiCore() {
-            requestAnimationFrame(animate3DAiCore);
+            if (!aiInView) {
+                aiRafId = null;
+                return;
+            }
+
+            aiRafId = requestAnimationFrame(animate3DAiCore);
 
             if (!isDraggingAi && aiCoreMesh) {
                 aiCoreMesh.rotation.y += aiRotSpeedY;
@@ -1295,7 +1450,6 @@ function init3DAiCore() {
             aiFpsFrameCount++;
             const now = performance.now();
             if (now - aiFpsLastTime >= 1000) {
-                const fpsEl = document.getElementById('ai-hud-fps');
                 if (fpsEl) fpsEl.textContent = Math.round((aiFpsFrameCount * 1000) / (now - aiFpsLastTime));
                 aiFpsFrameCount = 0;
                 aiFpsLastTime = now;
@@ -1303,7 +1457,16 @@ function init3DAiCore() {
 
             aiCoreRenderer.render(aiCoreScene, aiCoreCamera);
         }
-        animate3DAiCore();
+
+        // IntersectionObserver pauses WebGL rendering when AI Core section is scrolled out of view
+        const aiObserver = new IntersectionObserver((entries) => {
+            aiInView = entries[0].isIntersecting;
+            if (aiInView && !aiRafId) {
+                updateAiRect();
+                aiRafId = requestAnimationFrame(animate3DAiCore);
+            }
+        }, { threshold: 0.05 });
+        aiObserver.observe(container);
 
     } catch (err) {
         console.warn("Three.js init fallback:", err);
